@@ -2,6 +2,7 @@
 import Button from '@/components/ui/Button.astro';
 import Badge from '@/components/ui/Badge.astro';
 import HumanAgentToggle from '@/components/ui/HumanAgentToggle.astro';
+import MascotCrossfade from '@/components/ui/MascotCrossfade.astro';
 import { cn } from '@/lib/utils';
 ---
 
@@ -25,6 +26,16 @@ import { cn } from '@/lib/utils';
 
   <!-- Content -->
   <div class="relative z-10 max-w-3xl mx-auto text-center">
+    <!-- Mascot with crossfade -->
+    <div class="mb-8 flex justify-center">
+      <MascotCrossfade
+        humanImage="/mascot.png"
+        agentImage="/mascot-agent.png"
+        alt="Pinchtab mascot"
+        className="h-32 w-32 sm:h-40 sm:w-40 object-contain"
+      />
+    </div>
+
     <!-- Subheadline -->
     <p class={cn(
       'text-xs sm:text-sm font-bold uppercase tracking-widest',

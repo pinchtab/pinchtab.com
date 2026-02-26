@@ -1,0 +1,67 @@
+---
+import { cn } from '@/lib/utils';
+
+interface Props {
+  humanImage: string;
+  agentImage: string;
+  alt?: string;
+  className?: string;
+}
+
+const {
+  humanImage,
+  agentImage,
+  alt = 'Pinchtab mascot',
+  className = 'h-32 w-32 sm:h-40 sm:w-40 object-contain',
+} = Astro.props;
+---
+
+<div class="mascot-crossfade relative overflow-hidden">
+  <!-- Human mode image (default visible) -->
+  <img
+    id="mascot-human"
+    src={humanImage}
+    alt={alt}
+    class={cn(className, 'transition-opacity duration-500 ease-in-out opacity-100')}
+  />
+  
+  <!-- Agent mode image (initially hidden) -->
+  <img
+    id="mascot-agent"
+    src={agentImage}
+    alt={alt}
+    class={cn(className, 'absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0')}
+  />
+</div>
+
+<script is:inline>
+  function updateMascot(mode) {
+    const humanEl = document.getElementById('mascot-human');
+    const agentEl = document.getElementById('mascot-agent');
+    
+    if (!humanEl || !agentEl) return;
+    
+    if (mode === 'agents') {
+      humanEl.classList.remove('opacity-100');
+      humanEl.classList.add('opacity-0');
+      agentEl.classList.remove('opacity-0');
+      agentEl.classList.add('opacity-100');
+    } else {
+      humanEl.classList.remove('opacity-0');
+      humanEl.classList.add('opacity-100');
+      agentEl.classList.remove('opacity-100');
+      agentEl.classList.add('opacity-0');
+    }
+  }
+
+  // Listen for mode changes from HumanAgentToggle
+  document.addEventListener('modechange', (e) => {
+    updateMascot(e.detail.mode);
+  });
+
+  // Initialize with stored mode on page load
+  window.addEventListener('load', () => {
+    const stored = localStorage.getItem('pinchtab-mode') || 'human';
+    updateMascot(stored);
+  });
+</script>
