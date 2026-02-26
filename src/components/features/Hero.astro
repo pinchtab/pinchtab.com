@@ -1,140 +1,157 @@
 ---
-import Button from '@/components/ui/Button.astro';
-import Badge from '@/components/ui/Badge.astro';
 import HumanAgentToggle from '@/components/ui/HumanAgentToggle.astro';
 import MascotCrossfade from '@/components/ui/MascotCrossfade.astro';
 import { cn } from '@/lib/utils';
+
+const featurePills = ['Go', '12MB binary', 'HTTP API', 'MIT license', 'Zero config'];
 ---
 
 <section
   class={cn(
-    'relative min-h-screen flex items-center justify-center',
-    'py-12 px-6 sm:px-8 overflow-hidden'
+    'relative isolate min-h-screen flex items-center justify-center',
+    'pt-[80px] pb-[60px] px-6 sm:px-8 overflow-hidden'
   )}
 >
   <HumanAgentToggle />
 
-  <!-- Background glow -->
+  <!-- Hero top radial glow (pseudo-element equivalent) -->
   <div
     class={cn(
-      'absolute inset-0 -z-10',
-      'bg-gradient-to-b from-brand-accent-glow via-transparent to-transparent',
-      'pointer-events-none'
+      'pointer-events-none absolute left-1/2 z-0',
+      'h-[860px] w-[860px] -translate-x-1/2 rounded-full'
     )}
+    style="top: -320px; background: radial-gradient(circle, rgb(var(--brand-accent-rgb) / 0.12) 0%, rgb(var(--brand-accent-rgb) / 0.05) 42%, transparent 72%);"
     aria-hidden="true"
   />
 
   <!-- Content -->
-  <div class="relative z-10 max-w-3xl mx-auto text-center">
+  <div class="relative z-10 max-w-4xl mx-auto -translate-y-16 sm:-translate-y-20 lg:-translate-y-24 text-center">
     <!-- Mascot with crossfade -->
-    <div class="mb-8 flex justify-center">
-      <MascotCrossfade
-        humanImage="/mascot.png"
-        agentImage="/mascot-agent.png"
-        alt="Pinchtab mascot"
-        className="h-32 w-32 sm:h-40 sm:w-40 object-contain"
-      />
+    <div class="relative z-10 mb-4 flex justify-center">
+      <div class="relative">
+        <MascotCrossfade
+          humanImage="/mascot.png"
+          agentImage="/mascot-agent.png"
+          alt="PinchTab mascot"
+          className="h-40 w-40 sm:h-48 sm:w-48 lg:h-56 lg:w-56 -translate-y-4 sm:-translate-y-6 lg:-translate-y-8 object-contain drop-shadow-[0_0_30px_rgb(var(--brand-accent-rgb)/0.2)]"
+        />
+      </div>
     </div>
 
-    <!-- Subheadline -->
-    <p class={cn(
-      'text-xs sm:text-sm font-bold uppercase tracking-widest',
-      'text-brand-accent mb-8'
-    )}>
-      Browser automation · AI Native
-    </p>
-
-    <!-- Headline -->
+    <!-- Brand name (main focal point) -->
     <h1
       class={cn(
-        'font-bold tracking-tight leading-tight',
-        'text-5xl sm:text-6xl lg:text-7xl',
-        'mb-6'
+        'relative z-20',
+        'font-bold leading-[1.1] tracking-[-0.03em]',
+        'text-[clamp(2.8rem,6vw,4.2rem)]',
+        'mb-2'
       )}
     >
-      <span class="block">Pinchtab</span>
-      <span class="gradient-text block">
-        <span id="tagline">Browser for your AI Agents</span>
+      <span class="gradient-text inline-block">
+        PinchTab
       </span>
     </h1>
 
-    <!-- Description -->
-    <p class={cn(
-      'text-lg sm:text-xl text-brand-text-muted leading-relaxed',
-      'max-w-2xl mx-auto mb-12'
-    )}>
-      Small Go binary. Real Chrome. HTTP API. Any agent, any language, even curl.
-    </p>
-
-    <!-- CTA Buttons -->
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-      <Button
-        href="https://pinchtab.com/install.sh"
-        variant="primary"
-        size="lg"
-        class="w-full sm:w-auto"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>
-        Install Pinchtab
-      </Button>
-      <Button
-        href="https://github.com/pinchtab"
-        variant="secondary"
-        size="lg"
-        class="w-full sm:w-auto"
-      >
-        View on GitHub
-      </Button>
+    <!-- Positioning line -->
+    <div
+      id="tagline"
+      class={cn(
+        'font-medium uppercase',
+        'text-base tracking-[0.15em]',
+        'text-brand-accent mb-5'
+      )}
+    >
+      Browser control for AI agents
     </div>
 
-    <!-- Install hint -->
+    <!-- Supporting description -->
     <p class={cn(
-      'text-sm text-brand-text-muted font-mono',
-      'bg-brand-surface-code border border-brand-border-subtle',
-      'px-4 py-3 rounded-md',
-      'inline-block'
+      'text-[1.15rem] text-brand-text-muted leading-[1.7]',
+      'max-w-[520px] mx-auto mb-8'
     )}>
-      <code class="text-brand-accent">
-        curl -fsSL https://pinchtab.com/install.sh | bash
-      </code>
+      12MB Go binary. Launches Chrome, exposes an HTTP API. Any agent, any language, even curl.
     </p>
+
+    <!-- Feature pills -->
+    <div class="mb-[36px] flex flex-wrap items-center justify-center gap-[10px]">
+      {
+        featurePills.map((pill) => {
+          const highlighted = pill === 'HTTP API';
+          return (
+            <span
+              class={cn(
+                'inline-flex items-center rounded-[20px] border',
+                'px-[14px] py-[5px]',
+                'text-[0.72rem] font-mono font-medium tracking-[0.01em]',
+                highlighted
+                  ? 'border-[rgba(251,191,36,0.30)] bg-[rgba(251,191,36,0.08)] text-brand-accent'
+                  : 'border-brand-border-subtle bg-[rgba(255,255,255,0.03)] text-brand-text-muted'
+              )}
+            >
+              {pill}
+            </span>
+          );
+        })
+      }
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-[14px]">
+      <a
+        href="https://github.com/pinchtab/pinchtab"
+        class={cn(
+          'inline-flex items-center justify-center',
+          'w-full sm:w-auto h-12 px-7 rounded-[10px]',
+          'font-semibold text-[0.9rem] leading-none',
+          'bg-brand-accent text-brand-bg border border-transparent',
+          'shadow-[0_8px_18px_rgb(var(--brand-accent-rgb)/0.22)]',
+          'transition-all duration-200',
+          'hover:bg-brand-accent-light hover:-translate-y-px hover:shadow-[0_12px_24px_rgb(var(--brand-accent-rgb)/0.28)]',
+          'active:translate-y-0'
+        )}
+      >
+        View on GitHub
+      </a>
+      <a
+        href="/#quickstart"
+        class={cn(
+          'inline-flex items-center justify-center',
+          'w-full sm:w-auto h-12 px-7 rounded-[10px]',
+          'font-semibold text-[0.9rem] leading-none',
+          'bg-[rgba(255,255,255,0.05)] border border-[rgb(var(--brand-border-subtle-rgb)/0.20)]',
+          'text-brand-text',
+          'shadow-[inset_0_1px_0_rgb(255_255_255/0.03)]',
+          'transition-all duration-200',
+          'hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgb(var(--brand-border-subtle-rgb)/0.34)] hover:-translate-y-px'
+        )}
+      >
+        Quick Start
+      </a>
+    </div>
   </div>
 </section>
 
 <script is:inline>
+  const normalizeMode = (mode) => mode === 'agent' || mode === 'agents' ? 'agent' : 'human';
+
   function updateTagline(mode) {
     const taglineEl = document.getElementById('tagline');
     if (!taglineEl) return;
-    
-    if (mode === 'agents') {
+
+    if (normalizeMode(mode) === 'agent') {
       taglineEl.textContent = 'The browser you deserve';
     } else {
-      taglineEl.textContent = 'Browser for your AI Agents';
+      taglineEl.textContent = 'Browser control for AI agents';
     }
   }
 
   // Listen for mode changes
-  document.addEventListener('modechange', (e) => {
-    updateTagline(e.detail.mode);
+  document.addEventListener('modechange', (event) => {
+    updateTagline(event.detail.mode);
   });
 
   // Initialize with stored mode on page load
-  window.addEventListener('load', () => {
+  window.addEventListener('DOMContentLoaded', () => {
     const stored = localStorage.getItem('pinchtab-mode') || 'human';
     updateTagline(stored);
   });

@@ -9,8 +9,8 @@ export interface Props {
 }
 
 const {
-  title = 'Pinchtab — Browser Control for AI Agents',
-  description = 'Pinchtab gives AI agents precise, reliable control over browsers. Automate the web at a new level.',
+  title = 'PinchTab — Browser Control for AI Agents',
+  description = 'PinchTab gives AI agents precise, reliable control over browsers. Automate the web at a new level.',
   class: pageClass,
 } = Astro.props;
 ---
@@ -30,6 +30,20 @@ const {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <script is:inline>
+      (() => {
+        let mode = 'human';
+
+        try {
+          const stored = localStorage.getItem('pinchtab-mode');
+          mode = stored === 'agent' || stored === 'agents' ? 'agent' : 'human';
+        } catch {
+          mode = 'human';
+        }
+
+        document.documentElement.setAttribute('data-site-mode', mode);
+      })();
+    </script>
     <title>{title}</title>
   </head>
   <body class="min-h-screen flex flex-col">

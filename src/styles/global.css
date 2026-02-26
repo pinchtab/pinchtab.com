@@ -2,6 +2,57 @@
 
 @import "tailwindcss";
 
+:root,
+html[data-site-mode='human'] {
+  --brand-bg-rgb: 15 17 23;
+  --brand-surface-rgb: 26 29 39;
+  --brand-surface-hover-rgb: 34 38 51;
+  --brand-surface-code-rgb: 20 23 32;
+  --brand-border-rgb: 251 191 36;
+  --brand-border-subtle-rgb: 255 255 255;
+  --brand-text-rgb: 226 232 240;
+  --brand-text-muted-rgb: 148 163 184;
+  --brand-text-dim-rgb: 100 116 139;
+  --brand-accent-rgb: 251 191 36;
+  --brand-accent-light-rgb: 253 230 138;
+  --brand-accent-dark-rgb: 217 119 6;
+  --theme-glow-rgb: 251 191 36;
+
+  --switch-track-rgb: 16 28 52;
+  --switch-track-border-rgb: 56 82 128;
+  --switch-track-inner-rgb: 11 21 40;
+  --switch-track-inner-border-rgb: 78 114 176;
+  --switch-thumb-rgb: 234 179 8;
+  --switch-thumb-border-rgb: 250 204 21;
+  --switch-label-active-rgb: 10 10 10;
+  --switch-label-inactive-rgb: 150 173 214;
+}
+
+html[data-site-mode='agent'] {
+  --brand-bg-rgb: 8 16 34;
+  --brand-surface-rgb: 13 27 54;
+  --brand-surface-hover-rgb: 20 38 74;
+  --brand-surface-code-rgb: 8 22 46;
+  --brand-border-rgb: 59 130 246;
+  --brand-border-subtle-rgb: 147 197 253;
+  --brand-text-rgb: 229 238 255;
+  --brand-text-muted-rgb: 166 187 224;
+  --brand-text-dim-rgb: 112 143 196;
+  --brand-accent-rgb: 96 165 250;
+  --brand-accent-light-rgb: 147 197 253;
+  --brand-accent-dark-rgb: 37 99 235;
+  --theme-glow-rgb: 96 165 250;
+
+  --switch-track-rgb: 10 29 64;
+  --switch-track-border-rgb: 78 128 224;
+  --switch-track-inner-rgb: 9 24 52;
+  --switch-track-inner-border-rgb: 106 162 255;
+  --switch-thumb-rgb: 59 130 246;
+  --switch-thumb-border-rgb: 147 197 253;
+  --switch-label-active-rgb: 255 255 255;
+  --switch-label-inactive-rgb: 172 196 239;
+}
+
 /* ===========================
    Base styles (monolite original)
    =========================== */
@@ -11,14 +62,14 @@ html {
 }
 
 body {
-  background-color: #05070b;
+  background-color: rgb(var(--brand-bg-rgb));
   background-image: 
-    radial-gradient(900px 600px at 15% 10%, rgba(250, 204, 21, 0.10), transparent 60%),
-    radial-gradient(800px 550px at 85% 20%, rgba(250, 204, 21, 0.07), transparent 60%),
-    radial-gradient(1000px 700px at 70% 85%, rgba(250, 204, 21, 0.05), transparent 65%),
-    radial-gradient(1200px 900px at 50% 50%, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.9));
+    radial-gradient(900px 600px at 15% 10%, rgb(var(--theme-glow-rgb) / 0.12), transparent 60%),
+    radial-gradient(800px 550px at 85% 20%, rgb(var(--theme-glow-rgb) / 0.08), transparent 60%),
+    radial-gradient(1000px 700px at 70% 85%, rgb(var(--theme-glow-rgb) / 0.06), transparent 65%),
+    radial-gradient(1200px 900px at 50% 50%, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.9));
   background-attachment: fixed;
-  color: #e2e8f0;
+  color: rgb(var(--brand-text-rgb));
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -26,13 +77,13 @@ body {
 }
 
 a {
-  color: #fbbf24;
+  color: rgb(var(--brand-accent-rgb));
   text-decoration: none;
   transition: color 0.2s;
 }
 
 a:hover {
-  color: #fde68a;
+  color: rgb(var(--brand-accent-light-rgb));
 }
 
 /* ===========================
@@ -65,15 +116,15 @@ h3 {
 code {
   font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
   font-size: 0.85em;
-  background-color: rgba(251, 191, 36, 0.08);
-  color: #fde68a;
+  background-color: rgb(var(--brand-accent-rgb) / 0.10);
+  color: rgb(var(--brand-accent-light-rgb));
   padding: 2px 6px;
   border-radius: 4px;
 }
 
 pre {
-  background-color: #141720;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: rgb(var(--brand-surface-code-rgb));
+  border: 1px solid rgb(var(--brand-border-subtle-rgb) / 0.12);
   border-radius: 16px;
   overflow-x: auto;
   padding: 1.5rem;
@@ -106,16 +157,20 @@ section {
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #fbbf24;
+    color: rgb(var(--brand-accent-rgb));
   }
 
   .glow {
-    box-shadow: 0 0 40px rgba(251, 191, 36, 0.08);
+    box-shadow: 0 0 40px rgb(var(--brand-accent-rgb) / 0.12);
   }
 
   /* Gradient text for accents */
   .gradient-text {
-    background: linear-gradient(135deg, #fbbf24, #fde68a);
+    background: linear-gradient(
+      135deg,
+      rgb(var(--brand-accent-rgb)),
+      rgb(var(--brand-accent-light-rgb))
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

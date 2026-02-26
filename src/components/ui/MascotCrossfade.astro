@@ -5,63 +5,84 @@ interface Props {
   humanImage: string;
   agentImage: string;
   alt?: string;
+  class?: string;
   className?: string;
 }
 
 const {
   humanImage,
   agentImage,
-  alt = 'Pinchtab mascot',
+  alt = 'PinchTab mascot',
+  class: classProp,
   className = 'h-32 w-32 sm:h-40 sm:w-40 object-contain',
 } = Astro.props;
+
+const imageClass = cn(className, classProp);
 ---
 
-<div class="mascot-crossfade relative overflow-hidden">
-  <!-- Human mode image (default visible) -->
+<div class="relative overflow-visible" data-mascot-crossfade>
   <img
-    id="mascot-human"
+    data-mascot-human
     src={humanImage}
     alt={alt}
-    class={cn(className, 'transition-opacity duration-500 ease-in-out opacity-100')}
+    class={cn(
+      imageClass,
+      'transition-all duration-500 ease-snappy',
+      'opacity-100 scale-100 rotate-0'
+    )}
   />
-  
-  <!-- Agent mode image (initially hidden) -->
+
   <img
-    id="mascot-agent"
+    data-mascot-agent
     src={agentImage}
     alt={alt}
-    class={cn(className, 'absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0')}
+    class={cn(
+      imageClass,
+      'absolute left-1/2 top-1/2 transition-all duration-500 ease-snappy',
+      'opacity-0'
+    )}
+    style="width: 140%; height: 140%; transform: translate(-50%, -50%) scale(0.9) rotate(12deg);"
   />
 </div>
 
 <script is:inline>
-  function updateMascot(mode) {
-    const humanEl = document.getElementById('mascot-human');
-    const agentEl = document.getElementById('mascot-agent');
-    
-    if (!humanEl || !agentEl) return;
-    
-    if (mode === 'agents') {
-      humanEl.classList.remove('opacity-100');
-      humanEl.classList.add('opacity-0');
-      agentEl.classList.remove('opacity-0');
-      agentEl.classList.add('opacity-100');
-    } else {
-      humanEl.classList.remove('opacity-0');
-      humanEl.classList.add('opacity-100');
-      agentEl.classList.remove('opacity-100');
-      agentEl.classList.add('opacity-0');
-    }
-  }
+  (() => {
+    const STORAGE_KEY = 'pinchtab-mode';
+    const roots = Array.from(document.querySelectorAll('[data-mascot-crossfade]'));
+    if (!roots.length) return;
 
-  // Listen for mode changes from HumanAgentToggle
-  document.addEventListener('modechange', (e) => {
-    updateMascot(e.detail.mode);
-  });
+    const normalizeMode = (value) => value === 'agent' || value === 'agents' ? 'agent' : 'human';
 
-  // Initialize with stored mode on page load
-  window.addEventListener('load', () => {
-    const stored = localStorage.getItem('pinchtab-mode') || 'human';
-    updateMascot(stored);
-  });
+    const updateMascot = (root, mode) => {
+      const humanEl = root.querySelector('[data-mascot-human]');
+      const agentEl = root.querySelector('[data-mascot-agent]');
+      if (!humanEl || !agentEl) return;
+
+      const isAgent = normalizeMode(mode) === 'agent';
+
+      humanEl.classList.toggle('opacity-0', isAgent);
+      humanEl.classList.toggle('scale-90', isAgent);
+      humanEl.classList.toggle('-rotate-12', isAgent);
+      humanEl.classList.toggle('opacity-100', !isAgent);
+      humanEl.classList.toggle('scale-100', !isAgent);
+      humanEl.classList.toggle('rotate-0', !isAgent);
+
+      agentEl.classList.toggle('opacity-100', isAgent);
+      agentEl.classList.toggle('opacity-0', !isAgent);
+      agentEl.style.transform = isAgent
+        ? 'translate(-50%, -50%) scale(1) rotate(0deg)'
+        : 'translate(-50%, -50%) scale(0.9) rotate(12deg)';
+    };
+
+    const applyAll = (mode) => {
+      roots.forEach((root) => updateMascot(root, mode));
+    };
+
+    document.addEventListener('modechange', (event) => {
+      applyAll(event.detail.mode);
+    });
+
+    const stored = localStorage.getItem(STORAGE_KEY) || 'human';
+    applyAll(stored);
+  })();
 </script>

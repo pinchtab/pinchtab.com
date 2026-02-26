@@ -9,95 +9,144 @@ const { class: className } = Astro.props;
 ---
 
 <div class={cn(
-  'fixed top-6 right-6 z-50',
+  'fixed top-4 right-4 sm:top-6 sm:right-6 z-[120]',
   className
 )}>
-  <!-- Mode switch toggle -->
-  <div
-    class="mode-switch-container relative inline-flex items-center gap-1 px-1 py-1 rounded-full bg-brand-surface border border-brand-border-subtle shadow-lg"
-    role="group"
-    aria-label="Mode selector"
+  <button
+    type="button"
+    class={cn(
+      'group relative h-11 w-48 rounded-xl border transition-all duration-300',
+      'bg-[rgb(var(--switch-track-rgb)/0.98)]',
+      'border-[rgb(var(--switch-track-border-rgb)/0.9)]',
+      'shadow-[0_10px_24px_rgba(0,0,0,0.30)]',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/50',
+      'focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg',
+      'active:scale-[0.99] select-none'
+    )}
+    data-mode-switch
+    role="switch"
+    aria-checked="false"
+    aria-label="Switch between human and agent mode"
   >
-    <!-- Sliding indicator background -->
-    <div
-      class="mode-switch-indicator absolute inset-y-1 w-12 rounded-full bg-brand-accent transition-all duration-300"
-      style="width: 48px; left: 4px;"
-    ></div>
+    <span
+      class="pointer-events-none absolute inset-[2px] rounded-[10px] border bg-[rgb(var(--switch-track-inner-rgb)/0.9)] border-[rgb(var(--switch-track-inner-border-rgb)/0.25)]"
+      aria-hidden="true"
+    ></span>
 
-    <!-- Human button -->
-    <button
-      class="mode-switch-btn mode-switch-btn-human relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200"
-      data-mode="human"
-      aria-label="Human mode"
-      aria-pressed="true"
-      title="Human mode"
+    <span
+      class={cn(
+        'absolute left-[2px] top-[2px] z-20 h-[38px] w-[calc(50%-2px)] rounded-[8px] border',
+        'bg-[rgb(var(--switch-thumb-rgb)/1)]',
+        'border-[rgb(var(--switch-thumb-border-rgb)/0.9)]',
+        'shadow-[0_8px_18px_rgba(0,0,0,0.34),inset_0_1px_1px_rgba(255,255,255,0.5)]',
+        'transition-all duration-300 ease-snappy will-change-transform'
+      )}
+      data-mode-thumb
+      aria-hidden="true"
     >
-      <img
-        src="/mode-human.png"
-        alt="Human"
-        class="w-6 h-6 object-contain"
-      />
-    </button>
+      <span class="sr-only">Active mode indicator</span>
+    </span>
 
-    <!-- Agents button -->
-    <button
-      class="mode-switch-btn mode-switch-btn-agents relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200"
-      data-mode="agents"
-      aria-label="Agents mode"
-      aria-pressed="false"
-      title="Agents mode"
+    <span
+      class={cn(
+        'relative z-10 grid h-full w-full grid-cols-2 items-center',
+        'text-[10px] font-semibold uppercase tracking-[0.16em]'
+      )}
+      aria-hidden="true"
     >
-      <img
-        src="/mode-robot.png"
-        alt="Agents"
-        class="w-6 h-6 object-contain"
-      />
-    </button>
-  </div>
+      <span class="text-center transition-colors duration-300 text-[rgb(var(--switch-label-active-rgb)/1)]" data-mode-label-human>Humans</span>
+      <span class="text-center transition-colors duration-300 text-[rgb(var(--switch-label-inactive-rgb)/1)]" data-mode-label-agent>Agents</span>
+    </span>
+  </button>
 </div>
 
 <script is:inline>
-  function initModeSwitch() {
-    const container = document.querySelector('.mode-switch-container');
-    const indicator = document.querySelector('.mode-switch-indicator');
-    const buttons = document.querySelectorAll('.mode-switch-btn');
-    const stored = localStorage.getItem('pinchtab-mode') || 'human';
-    
-    function updateActiveState(mode) {
-      const humanBtn = document.querySelector('.mode-switch-btn-human');
-      const agentsBtn = document.querySelector('.mode-switch-btn-agents');
-      
-      if (mode === 'human') {
-        // Move indicator to left (human position)
-        indicator.style.left = '4px';
-        humanBtn.setAttribute('aria-pressed', 'true');
-        agentsBtn.setAttribute('aria-pressed', 'false');
-      } else {
-        // Move indicator to right (agents position)
-        indicator.style.left = 'calc(100% - 52px)';
-        agentsBtn.setAttribute('aria-pressed', 'true');
-        humanBtn.setAttribute('aria-pressed', 'false');
-      }
-    }
-    
-    // Set initial state
-    updateActiveState(stored);
+  (() => {
+    const STORAGE_KEY = 'pinchtab-mode';
+    const SITE_MODE_ATTR = 'data-site-mode';
+    const HUMAN = 'human';
+    const AGENT = 'agent';
+    const LEGACY_AGENT = 'agents';
 
-    // Handle clicks
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const mode = btn.dataset.mode;
-        localStorage.setItem('pinchtab-mode', mode);
-        updateActiveState(mode);
-        document.dispatchEvent(new CustomEvent('modechange', { detail: { mode } }));
+    const toggles = Array.from(document.querySelectorAll('[data-mode-switch]'));
+    if (!toggles.length) return;
+
+    const normalizeMode = (value) => value === AGENT || value === LEGACY_AGENT ? AGENT : HUMAN;
+    const setDocumentMode = (mode) => document.documentElement.setAttribute(SITE_MODE_ATTR, mode);
+    const readStoredMode = () => {
+      try {
+        return localStorage.getItem(STORAGE_KEY);
+      } catch {
+        return null;
+      }
+    };
+    const writeStoredMode = (mode) => {
+      try {
+        localStorage.setItem(STORAGE_KEY, mode);
+      } catch {
+        // no-op when storage is unavailable
+      }
+    };
+
+    const applyState = (toggle, mode) => {
+      const isAgent = mode === AGENT;
+
+      const thumb = toggle.querySelector('[data-mode-thumb]');
+      const humanLabel = toggle.querySelector('[data-mode-label-human]');
+      const agentLabel = toggle.querySelector('[data-mode-label-agent]');
+      if (!thumb || !humanLabel || !agentLabel) return;
+
+      toggle.setAttribute('aria-checked', String(isAgent));
+      toggle.dataset.mode = mode;
+
+      const travelX = Math.max(0, toggle.clientWidth - thumb.offsetWidth - 8);
+      thumb.style.transform = isAgent ? `translateX(${travelX}px)` : 'translateX(0px)';
+
+      humanLabel.style.color = isAgent
+        ? 'rgb(var(--switch-label-inactive-rgb) / 1)'
+        : '#0a0a0a';
+      agentLabel.style.color = isAgent
+        ? '#ffffff'
+        : 'rgb(var(--switch-label-inactive-rgb) / 1)';
+    };
+
+    const applyAll = (mode, dispatch = false) => {
+      const normalizedMode = normalizeMode(mode);
+      writeStoredMode(normalizedMode);
+      setDocumentMode(normalizedMode);
+      toggles.forEach((toggle) => applyState(toggle, normalizedMode));
+
+      if (dispatch) {
+        document.dispatchEvent(new CustomEvent('modechange', { detail: { mode: normalizedMode } }));
+      }
+    };
+
+    const initialMode = normalizeMode(readStoredMode());
+    applyAll(initialMode, false);
+
+    toggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const currentMode = normalizeMode(readStoredMode() || toggle.dataset.mode);
+        const nextMode = currentMode === HUMAN ? AGENT : HUMAN;
+        applyAll(nextMode, true);
+      });
+
+      toggle.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          applyAll(HUMAN, true);
+        }
+
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          applyAll(AGENT, true);
+        }
       });
     });
-  }
 
-  // Initialize on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initModeSwitch);
-  } else {
-    initModeSwitch();
-  }
+    window.addEventListener('resize', () => {
+      const activeMode = normalizeMode(readStoredMode());
+      toggles.forEach((toggle) => applyState(toggle, activeMode));
+    });
+  })();
 </script>
