@@ -1,91 +1,12 @@
 ---
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import '../styles/global.css';
-
-const title = 'Pinchtab — Browser Control for AI Agents';
-const description = 'Pinchtab gives AI agents precise, reliable control over browsers. Automate the web at a new level.';
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import Hero from '@/components/features/Hero.astro';
+import Features from '@/components/features/Features.astro';
+import QuickStart from '@/components/features/QuickStart.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content="https://pinchtab.com" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <Header />
-
-    <main>
-      <section class="hero">
-        <div class="hero-glow" aria-hidden="true"></div>
-        <div class="hero-content">
-          <span class="hero-badge">Browser Automation · AI Native</span>
-          <h1 class="hero-title">
-            Pinchtab<br />
-            <span class="hero-title-accent">Browser Control<br />for AI Agents</span>
-          </h1>
-          <p class="hero-description">
-            Give your AI agents precise, reliable control over any browser.
-            Automate workflows, scrape data, and interact with the web at a
-            new level — without writing a single line of Selenium.
-          </p>
-          <div class="hero-actions">
-            <a href="https://pinchtab.com/install.sh" class="btn btn-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              Install Pinchtab
-            </a>
-            <a href="https://github.com/pinchtab" class="btn btn-secondary">View on GitHub</a>
-          </div>
-          <p class="hero-install-hint">
-            <code>curl -fsSL https://pinchtab.com/install.sh | bash</code>
-          </p>
-        </div>
-      </section>
-
-      <section class="features" id="features">
-        <div class="container">
-          <h2 class="section-title">Built for the AI era</h2>
-          <div class="feature-grid">
-            <div class="feature-card">
-              <div class="feature-icon" aria-hidden="true">⚡</div>
-              <h3>Lightning fast</h3>
-              <p>Sub-millisecond command latency so your agents never wait on the browser.</p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon" aria-hidden="true">🔒</div>
-              <h3>Sandboxed &amp; secure</h3>
-              <p>Every session runs in an isolated context — no state leaks between tasks.</p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon" aria-hidden="true">🤖</div>
-              <h3>Agent-first API</h3>
-              <p>Designed from the ground up for LLM tool-calling, not human interaction.</p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon" aria-hidden="true">🌐</div>
-              <h3>Any browser</h3>
-              <p>Chrome, Firefox, WebKit — control all of them through a single interface.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <Footer />
-  </body>
-</html>
+<BaseLayout>
+  <Hero />
+  <Features />
+  <QuickStart />
+</BaseLayout>

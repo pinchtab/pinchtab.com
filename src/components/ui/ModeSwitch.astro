@@ -1,0 +1,103 @@
+---
+import { cn } from '@/lib/utils';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class={cn(
+  'fixed top-6 right-6 z-50',
+  className
+)}>
+  <!-- Mode switch toggle -->
+  <div
+    class="mode-switch-container relative inline-flex items-center gap-1 px-1 py-1 rounded-full bg-brand-surface border border-brand-border-subtle shadow-lg"
+    role="group"
+    aria-label="Mode selector"
+  >
+    <!-- Sliding indicator background -->
+    <div
+      class="mode-switch-indicator absolute inset-y-1 w-12 rounded-full bg-brand-accent transition-all duration-300"
+      style="width: 48px; left: 4px;"
+    ></div>
+
+    <!-- Human button -->
+    <button
+      class="mode-switch-btn mode-switch-btn-human relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200"
+      data-mode="human"
+      aria-label="Human mode"
+      aria-pressed="true"
+      title="Human mode"
+    >
+      <img
+        src="/mode-human.png"
+        alt="Human"
+        class="w-6 h-6 object-contain"
+      />
+    </button>
+
+    <!-- Agents button -->
+    <button
+      class="mode-switch-btn mode-switch-btn-agents relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200"
+      data-mode="agents"
+      aria-label="Agents mode"
+      aria-pressed="false"
+      title="Agents mode"
+    >
+      <img
+        src="/mode-robot.png"
+        alt="Agents"
+        class="w-6 h-6 object-contain"
+      />
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+  function initModeSwitch() {
+    const container = document.querySelector('.mode-switch-container');
+    const indicator = document.querySelector('.mode-switch-indicator');
+    const buttons = document.querySelectorAll('.mode-switch-btn');
+    const stored = localStorage.getItem('pinchtab-mode') || 'human';
+    
+    function updateActiveState(mode) {
+      const humanBtn = document.querySelector('.mode-switch-btn-human');
+      const agentsBtn = document.querySelector('.mode-switch-btn-agents');
+      
+      if (mode === 'human') {
+        // Move indicator to left (human position)
+        indicator.style.left = '4px';
+        humanBtn.setAttribute('aria-pressed', 'true');
+        agentsBtn.setAttribute('aria-pressed', 'false');
+      } else {
+        // Move indicator to right (agents position)
+        indicator.style.left = 'calc(100% - 52px)';
+        agentsBtn.setAttribute('aria-pressed', 'true');
+        humanBtn.setAttribute('aria-pressed', 'false');
+      }
+    }
+    
+    // Set initial state
+    updateActiveState(stored);
+
+    // Handle clicks
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        localStorage.setItem('pinchtab-mode', mode);
+        updateActiveState(mode);
+        document.dispatchEvent(new CustomEvent('modechange', { detail: { mode } }));
+      });
+    });
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initModeSwitch);
+  } else {
+    initModeSwitch();
+  }
+</script>

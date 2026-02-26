@@ -1,0 +1,52 @@
+---
+import CodeTerminal from '@/components/ui/CodeTerminal.astro';
+import { cn } from '@/lib/utils';
+---
+
+<section class={cn(
+  'py-20 sm:py-24 lg:py-28',
+  'border-t border-brand-border-subtle'
+)}>
+  <div class="container-custom">
+    <!-- Section header -->
+    <div class="mb-12 sm:mb-16">
+      <p class={cn(
+        'section-label mb-4 flex items-center gap-2',
+        'text-xs font-bold uppercase tracking-widest',
+        'text-brand-accent'
+      )}>
+        <span>&gt;</span>
+        <span>Quick Start</span>
+      </p>
+      <h2 class={cn(
+        'font-bold tracking-tight',
+        'text-4xl sm:text-5xl lg:text-6xl mb-4'
+      )}>
+        Up and running in seconds
+      </h2>
+      <p class={cn(
+        'text-lg text-brand-text-muted leading-relaxed',
+        'max-w-2xl'
+      )}>
+        One command to install. Chrome opens. You log into your sites. Agents drive the rest.
+      </p>
+    </div>
+
+    <!-- Code terminal with install options -->
+    <CodeTerminal
+      tabs={[
+        {
+          label: 'One-liner',
+          method: 'oneliner',
+          code: '# One-liner install (macOS/Linux)\ncurl -fsSL https://pinchtab.com/install.sh | bash',
+        },
+        {
+          label: 'npm',
+          method: 'npm',
+          code: '# Install via npm\nnpm install -g pinchtab',
+        },
+      ]}
+      defaultTab="oneliner"
+    />
+  </div>
+</section>

@@ -1,0 +1,39 @@
+---
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
+
+const cardVariants = cva(
+  'rounded-md transition-all duration-150',
+  {
+    variants: {
+      variant: {
+        default: 'bg-brand-surface border border-brand-border-subtle',
+        elevated: 'bg-brand-surface-hover border border-brand-border-subtle',
+        hover: 'bg-brand-surface border border-brand-border-subtle hover:bg-brand-surface-hover hover:border-brand-border',
+      },
+      padding: {
+        none: 'p-0',
+        sm: 'p-4',
+        md: 'p-6',
+        lg: 'p-8',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      padding: 'md',
+    },
+  }
+);
+
+export interface Props extends VariantProps<typeof cardVariants> {
+  class?: string;
+}
+
+const { variant, padding, class: className, ...rest } = Astro.props;
+
+const cardClass = cn(cardVariants({ variant, padding }), className);
+---
+
+<div class={cardClass} {...rest}>
+  <slot />
+</div>

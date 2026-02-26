@@ -1,0 +1,165 @@
+---
+import { cn } from '@/lib/utils';
+
+export interface CodeTab {
+  label: string;
+  method: string;
+  code: string;
+}
+
+export interface Props {
+  tabs: CodeTab[];
+  defaultTab?: string;
+  class?: string;
+}
+
+const { tabs, defaultTab = tabs[0]?.method || 'default', class: className } = Astro.props;
+---
+
+<div class={cn(
+  'rounded-2xl overflow-hidden',
+  'bg-gradient-to-br from-slate-900 to-slate-950',
+  'border border-white/8',
+  'shadow-xl shadow-black/50',
+  'my-6',
+  className
+)}>
+  <!-- Header -->
+  <div class="h-12 px-5 flex items-center gap-4 border-b border-white/8 bg-gradient-to-b from-slate-800/40 to-slate-900/20">
+    <!-- Traffic Lights -->
+    <div class="flex gap-2">
+      <div class="w-3 h-3 rounded-full bg-red-500 shadow-sm"></div>
+      <div class="w-3 h-3 rounded-full bg-yellow-400 shadow-sm"></div>
+      <div class="w-3 h-3 rounded-full bg-green-500 shadow-sm"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 ml-2">
+      {tabs.map((tab) => (
+        <button
+          class={cn(
+            'code-tab px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer',
+            tab.method === defaultTab
+              ? 'bg-yellow-400 text-slate-950 shadow-md'
+              : 'bg-transparent text-slate-400 hover:bg-white/5'
+          )}
+          data-method={tab.method}
+          onclick={`switchTab(event, '${tab.method}')`}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+
+    <!-- Language Label (Right) -->
+    <div class="ml-auto text-xs text-slate-500 tracking-wider opacity-60 font-mono">
+      terminal
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="relative px-6 py-6 bg-gradient-to-b from-slate-900 to-slate-950">
+    <!-- Code Sections -->
+    <pre class="font-mono text-sm leading-relaxed whitespace-pre-wrap overflow-x-auto">
+{tabs.map((tab) => {
+  const lines = tab.code.split('\n');
+  return (
+    <div
+      class={cn(
+        'code-terminal-section',
+        tab.method !== defaultTab && 'hidden'
+      )}
+      data-method={tab.method}
+    >
+{lines.map((line) => {
+  const isComment = line.trim().startsWith('#');
+  return (
+    <code class={isComment ? 'text-slate-500' : 'text-yellow-300'}>
+      {line}
+      {'\n'}
+    </code>
+  );
+})}
+    </div>
+  );
+})}
+    </pre>
+
+    <!-- Copy Button -->
+    <button
+      class={cn(
+        'copy-btn absolute bottom-4 right-4',
+        'px-2.5 py-1 text-xs font-semibold rounded-lg',
+        'bg-yellow-400 text-slate-950',
+        'hover:bg-yellow-300',
+        'transition-all duration-150 cursor-pointer',
+        'shadow-md hover:shadow-lg'
+      )}
+      onclick="copyCode(event)"
+      title="Copy command"
+    >
+      CP
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+  function switchTab(event, method) {
+    const container = event.target.closest('div');
+    const allTabs = container.querySelectorAll('.code-tab');
+    const allSections = container.querySelectorAll('.code-terminal-section');
+
+    allTabs.forEach(tab => {
+      if (tab.dataset.method === method) {
+        tab.className = 'code-tab px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer bg-yellow-400 text-slate-950 shadow-md';
+      } else {
+        tab.className = 'code-tab px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer bg-transparent text-slate-400 hover:bg-white/5';
+      }
+    });
+
+    allSections.forEach(section => {
+      if (section.dataset.method === method) {
+        section.classList.remove('hidden');
+      } else {
+        section.classList.add('hidden');
+      }
+    });
+  }
+
+  function copyCode(event) {
+    const button = event.target;
+    const container = button.closest('div');
+    const activeSection = container.querySelector('.code-terminal-section:not(.hidden)');
+    
+    if (!activeSection) return;
+
+    const code = activeSection.textContent
+      .split('\n')
+      .filter(line => !line.trim().startsWith('#'))
+      .join('\n')
+      .trim();
+
+    navigator.clipboard.writeText(code).then(() => {
+      const original = button.textContent;
+      button.textContent = 'Copied!';
+      button.classList.remove('bg-yellow-400');
+      button.classList.add('bg-green-500');
+
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('bg-green-500');
+        button.classList.add('bg-yellow-400');
+      }, 1500);
+    });
+  }
+</script>
+
+<style>
+  .code-terminal-section {
+    display: block;
+  }
+
+  .code-terminal-section.hidden {
+    display: none;
+  }
+</style>

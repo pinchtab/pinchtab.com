@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#0f1117" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0f1117"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Title -->
+  <text x="600" y="240" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="80" fill="#fbbf24">Pinchtab</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="300" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="500" font-size="24" letter-spacing="4" fill="#94a3b8" text-transform="uppercase">BROWSER CONTROL FOR AI AGENTS</text>
+
+  <!-- Tagline -->
+  <text x="600" y="370" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" fill="#64748b">12MB Go binary · Zero config · HTTP API · MIT license</text>
+
+  <!-- Bottom -->
+  <rect x="0" y="530" width="1200" height="100" fill="rgba(255,255,255,0.02)"/>
+  <text x="600" y="588" text-anchor="middle" font-family="monospace" font-size="18" fill="#64748b">github.com/luigi-agosti/pinchtab</text>
+</svg>

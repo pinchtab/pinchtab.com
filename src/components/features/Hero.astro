@@ -1,0 +1,130 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Badge from '@/components/ui/Badge.astro';
+import HumanAgentToggle from '@/components/ui/HumanAgentToggle.astro';
+import { cn } from '@/lib/utils';
+---
+
+<section
+  class={cn(
+    'relative min-h-screen flex items-center justify-center',
+    'py-12 px-6 sm:px-8 overflow-hidden'
+  )}
+>
+  <HumanAgentToggle />
+
+  <!-- Background glow -->
+  <div
+    class={cn(
+      'absolute inset-0 -z-10',
+      'bg-gradient-to-b from-brand-accent-glow via-transparent to-transparent',
+      'pointer-events-none'
+    )}
+    aria-hidden="true"
+  />
+
+  <!-- Content -->
+  <div class="relative z-10 max-w-3xl mx-auto text-center">
+    <!-- Subheadline -->
+    <p class={cn(
+      'text-xs sm:text-sm font-bold uppercase tracking-widest',
+      'text-brand-accent mb-8'
+    )}>
+      Browser automation · AI Native
+    </p>
+
+    <!-- Headline -->
+    <h1
+      class={cn(
+        'font-bold tracking-tight leading-tight',
+        'text-5xl sm:text-6xl lg:text-7xl',
+        'mb-6'
+      )}
+    >
+      <span class="block">Pinchtab</span>
+      <span class="gradient-text block">
+        <span id="tagline">Browser for your AI Agents</span>
+      </span>
+    </h1>
+
+    <!-- Description -->
+    <p class={cn(
+      'text-lg sm:text-xl text-brand-text-muted leading-relaxed',
+      'max-w-2xl mx-auto mb-12'
+    )}>
+      Small Go binary. Real Chrome. HTTP API. Any agent, any language, even curl.
+    </p>
+
+    <!-- CTA Buttons -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+      <Button
+        href="https://pinchtab.com/install.sh"
+        variant="primary"
+        size="lg"
+        class="w-full sm:w-auto"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Install Pinchtab
+      </Button>
+      <Button
+        href="https://github.com/pinchtab"
+        variant="secondary"
+        size="lg"
+        class="w-full sm:w-auto"
+      >
+        View on GitHub
+      </Button>
+    </div>
+
+    <!-- Install hint -->
+    <p class={cn(
+      'text-sm text-brand-text-muted font-mono',
+      'bg-brand-surface-code border border-brand-border-subtle',
+      'px-4 py-3 rounded-md',
+      'inline-block'
+    )}>
+      <code class="text-brand-accent">
+        curl -fsSL https://pinchtab.com/install.sh | bash
+      </code>
+    </p>
+  </div>
+</section>
+
+<script is:inline>
+  function updateTagline(mode) {
+    const taglineEl = document.getElementById('tagline');
+    if (!taglineEl) return;
+    
+    if (mode === 'agents') {
+      taglineEl.textContent = 'The browser you deserve';
+    } else {
+      taglineEl.textContent = 'Browser for your AI Agents';
+    }
+  }
+
+  // Listen for mode changes
+  document.addEventListener('modechange', (e) => {
+    updateTagline(e.detail.mode);
+  });
+
+  // Initialize with stored mode on page load
+  window.addEventListener('load', () => {
+    const stored = localStorage.getItem('pinchtab-mode') || 'human';
+    updateTagline(stored);
+  });
+</script>

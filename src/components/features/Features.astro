@@ -1,0 +1,71 @@
+---
+import Card from '@/components/ui/Card.astro';
+import { cn } from '@/lib/utils';
+
+const features = [
+  {
+    icon: '⚡',
+    title: 'Lightning fast',
+    description: 'Sub-millisecond command latency so your agents never wait on the browser.',
+  },
+  {
+    icon: '🔒',
+    title: 'Sandboxed & secure',
+    description: 'Every session runs in an isolated context — no state leaks between tasks.',
+  },
+  {
+    icon: '🤖',
+    title: 'Agent-first API',
+    description: 'Designed from the ground up for LLM tool-calling, not human interaction.',
+  },
+  {
+    icon: '🌐',
+    title: 'Any browser',
+    description: 'Chrome, Firefox, WebKit — control all of them through a single interface.',
+  },
+];
+---
+
+<section class={cn(
+  'py-20 sm:py-24 lg:py-28',
+  'border-t border-brand-border-subtle'
+)}>
+  <div class="container-custom">
+    <!-- Section header -->
+    <div class="mb-16 sm:mb-20">
+      <p class={cn(
+        'section-label mb-4 flex items-center gap-2',
+        'text-xs font-bold uppercase tracking-widest',
+        'text-brand-accent'
+      )}>
+        <span>&gt;</span>
+        <span>Core Capabilities</span>
+      </p>
+      <h2 class={cn(
+        'font-bold tracking-tight',
+        'text-4xl sm:text-5xl lg:text-6xl mb-4'
+      )}>
+        Built for the AI era
+      </h2>
+    </div>
+
+    <!-- Feature grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {
+        features.map((feature) => (
+          <Card variant="hover" padding="lg">
+            <div class="text-4xl mb-4 leading-none block" aria-hidden="true">
+              {feature.icon}
+            </div>
+            <h3 class="font-semibold text-lg mb-3 text-brand-text">
+              {feature.title}
+            </h3>
+            <p class="text-sm text-brand-text-muted leading-relaxed">
+              {feature.description}
+            </p>
+          </Card>
+        ))
+      }
+    </div>
+  </div>
+</section>
