@@ -16,7 +16,7 @@ const {
 
 const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : Astro.url.origin;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
-const ogImageUrl = '/og-image.svg';
+const ogImageUrl = '/og-image.png';
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -67,7 +67,7 @@ const structuredData = {
     <link rel="apple-touch-icon" sizes="180x180" href="/icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#fbbf24" />
-    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
     <script is:inline>
       (() => {
         const normalizeMode = (mode) => (mode === 'agent' || mode === 'agents' ? 'agent' : 'human');

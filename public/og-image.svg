@@ -19,5 +19,5 @@
 
   <!-- Bottom -->
   <rect x="0" y="530" width="1200" height="100" fill="rgba(255,255,255,0.02)"/>
-  <text x="600" y="588" text-anchor="middle" font-family="monospace" font-size="18" fill="#64748b">github.com/luigi-agosti/pinchtab</text>
+  <text x="600" y="588" text-anchor="middle" font-family="monospace" font-size="18" fill="#64748b">pinchtab.com</text>
 </svg>

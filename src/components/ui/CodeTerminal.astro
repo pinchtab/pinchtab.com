@@ -154,22 +154,19 @@ const {
             }, 1400);
           };
 
-          const fallbackCopy = (value) => {
-            const textarea = document.createElement('textarea');
-            textarea.value = value;
-            textarea.setAttribute('readonly', '');
-            textarea.style.position = 'absolute';
-            textarea.style.left = '-9999px';
-            document.body.appendChild(textarea);
-            textarea.select();
-            const copied = document.execCommand('copy');
-            document.body.removeChild(textarea);
-            if (copied) showCopied();
-          };
-
           navigator.clipboard.writeText(command)
             .then(showCopied)
-            .catch(() => fallbackCopy(command));
+            .catch(() => {
+              copyButton.textContent = 'ERR';
+              copyButton.classList.remove('bg-brand-accent', 'hover:bg-brand-accent-light');
+              copyButton.classList.add('border-brand-red', 'bg-brand-red');
+
+              setTimeout(() => {
+                copyButton.textContent = 'CP';
+                copyButton.classList.remove('border-brand-red', 'bg-brand-red');
+                copyButton.classList.add('bg-brand-accent', 'hover:bg-brand-accent-light');
+              }, 1400);
+            });
         });
       }
     });
