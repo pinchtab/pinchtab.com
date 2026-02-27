@@ -1,0 +1,40 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+
+const bars = [
+  { count: '10,500', label: 'Full snapshot', height: '100%', highlight: false },
+  { count: '3,600', label: 'Interactive filter', height: '34%', highlight: false },
+  { count: '~2,000', label: 'Screenshot (vision)', height: '19%', highlight: false },
+  { count: '~800', label: 'Pinchtab /text', height: '8%', highlight: true },
+];
+---
+
+<section>
+  <SectionHeading
+    label="Token Efficiency"
+    title="5-13x cheaper than alternatives"
+    description="Measured on a live search results page. Use /text when you only need content."
+  />
+
+  <div class="grid h-55 grid-cols-4 items-end gap-4 py-4 sm:gap-5">
+    {
+      bars.map((bar) => (
+        <div class="flex h-full flex-col items-center justify-end gap-2">
+          <span class="font-mono text-xs font-semibold text-brand-text">{bar.count}</span>
+          <div
+            class:list={[
+              'w-full max-w-23.75 rounded-t-md',
+              bar.highlight
+                ? 'bg-linear-to-b from-brand-accent to-brand-accent-dark shadow-[0_0_20px_rgb(var(--brand-accent-rgb)/0.2)]'
+                : 'bg-[rgb(var(--brand-border-subtle-rgb)/0.12)]',
+            ]}
+            style={`height: ${bar.height};`}
+          ></div>
+          <span class="text-center font-mono text-[0.65rem] leading-4 text-brand-text-dim">
+            {bar.label}
+          </span>
+        </div>
+      ))
+    }
+  </div>
+</section>

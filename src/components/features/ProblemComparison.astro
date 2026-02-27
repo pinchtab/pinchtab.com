@@ -1,0 +1,69 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+
+const rows = [
+  { metric: 'Tokens/page', pinchtab: '~800 (/text)', openclaw: '~10,000+', playwright: '~10,000+' },
+  { metric: 'Interface', pinchtab: 'HTTP — any language', openclaw: 'Internal only', playwright: 'MCP protocol' },
+  { metric: 'Stealth mode', pinchtab: '✅', openclaw: '—', playwright: '—' },
+  { metric: 'Sessions persist', pinchtab: '✅', openclaw: '—', playwright: '—' },
+  { metric: 'Binary size', pinchtab: '12MB', openclaw: '—', playwright: 'Node.js' },
+  { metric: 'Lock-in', pinchtab: 'None', openclaw: 'OpenClaw', playwright: 'MCP clients' },
+];
+---
+
+<section>
+  <SectionHeading
+    label="The Problem"
+    title="Browser tools shouldn't have lock-in"
+    description="Playwright MCP, Browser Use, OpenClaw are tightly coupled to their frameworks. Pinchtab stays standalone with a plain HTTP interface."
+    descriptionClass="js-problem-description"
+  />
+
+  <div class="overflow-x-auto rounded-2xl border border-brand-border-subtle bg-brand-surface">
+    <table class="w-full min-w-170 border-collapse text-left text-sm">
+      <thead>
+        <tr class="border-b border-brand-border-subtle bg-[rgb(var(--brand-bg-rgb)/0.28)]">
+          <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.06em] text-brand-text-dim"></th>
+          <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.06em] text-brand-text-dim">Pinchtab</th>
+          <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.06em] text-brand-text-dim">OpenClaw Browser</th>
+          <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.06em] text-brand-text-dim">Playwright MCP</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row, index) => (
+            <tr class={index < rows.length - 1 ? 'border-b border-brand-border-subtle' : ''}>
+              <td class="whitespace-nowrap px-5 py-3 font-mono text-xs text-brand-text">{row.metric}</td>
+              <td class="px-5 py-3 font-semibold text-brand-accent">{row.pinchtab}</td>
+              <td class="px-5 py-3 text-brand-text-muted">{row.openclaw}</td>
+              <td class="px-5 py-3 text-brand-text-muted">{row.playwright}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script is:inline>
+  const normalizeMode = (mode) => (mode === 'agent' || mode === 'agents' ? 'agent' : 'human');
+
+  function updateProblemCopy(mode) {
+    const problemDescriptionEl = document.querySelector('.js-problem-description');
+    if (!problemDescriptionEl) return;
+
+    problemDescriptionEl.textContent =
+      normalizeMode(mode) === 'agent'
+        ? "Don't let frameworks control you, choose independence with a standalone tool."
+        : 'Playwright MCP, Browser Use, OpenClaw are tightly coupled to their frameworks. Pinchtab stays standalone with a plain HTTP interface.';
+  }
+
+  document.addEventListener('modechange', (event) => {
+    updateProblemCopy(event.detail.mode);
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const stored = localStorage.getItem('pinchtab-mode') || 'human';
+    updateProblemCopy(stored);
+  });
+</script>

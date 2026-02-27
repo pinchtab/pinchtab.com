@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
+@config "../../tailwind.config.ts";
 @import "tailwindcss";
 
 :root,
@@ -16,41 +17,51 @@ html[data-site-mode='human'] {
   --brand-accent-rgb: 251 191 36;
   --brand-accent-light-rgb: 253 230 138;
   --brand-accent-dark-rgb: 217 119 6;
+  --brand-accent-contrast-rgb: 10 10 10;
   --theme-glow-rgb: 251 191 36;
 
-  --switch-track-rgb: 16 28 52;
-  --switch-track-border-rgb: 56 82 128;
-  --switch-track-inner-rgb: 11 21 40;
-  --switch-track-inner-border-rgb: 78 114 176;
-  --switch-thumb-rgb: 234 179 8;
-  --switch-thumb-border-rgb: 250 204 21;
-  --switch-label-active-rgb: 10 10 10;
-  --switch-label-inactive-rgb: 150 173 214;
+  --switch-track-rgb: 21 25 36;
+  --switch-track-border-rgb: 66 74 94;
+  --switch-track-inner-rgb: 13 17 26;
+  --switch-track-inner-border-rgb: 86 95 118;
+  --switch-thumb-rgb: 250 204 21;
+  --switch-thumb-border-rgb: 245 158 11;
+  --switch-label-active-rgb: 255 255 255;
+  --switch-label-inactive-rgb: 145 153 176;
+  --switch-label-human-inactive-rgb: 96 165 250;
+  --switch-label-agent-inactive-rgb: 250 204 21;
+
+  --selection-bg-rgb: 251 191 36;
 }
 
 html[data-site-mode='agent'] {
-  --brand-bg-rgb: 8 16 34;
-  --brand-surface-rgb: 13 27 54;
-  --brand-surface-hover-rgb: 20 38 74;
-  --brand-surface-code-rgb: 8 22 46;
+  --brand-bg-rgb: 15 17 23;
+  --brand-surface-rgb: 26 29 39;
+  --brand-surface-hover-rgb: 34 38 51;
+  --brand-surface-code-rgb: 20 23 32;
   --brand-border-rgb: 59 130 246;
-  --brand-border-subtle-rgb: 147 197 253;
-  --brand-text-rgb: 229 238 255;
-  --brand-text-muted-rgb: 166 187 224;
-  --brand-text-dim-rgb: 112 143 196;
+  --brand-border-subtle-rgb: 255 255 255;
+  --brand-text-rgb: 226 232 240;
+  --brand-text-muted-rgb: 148 163 184;
+  --brand-text-dim-rgb: 100 116 139;
   --brand-accent-rgb: 96 165 250;
   --brand-accent-light-rgb: 147 197 253;
   --brand-accent-dark-rgb: 37 99 235;
+  --brand-accent-contrast-rgb: 255 255 255;
   --theme-glow-rgb: 96 165 250;
 
-  --switch-track-rgb: 10 29 64;
-  --switch-track-border-rgb: 78 128 224;
-  --switch-track-inner-rgb: 9 24 52;
-  --switch-track-inner-border-rgb: 106 162 255;
-  --switch-thumb-rgb: 59 130 246;
-  --switch-thumb-border-rgb: 147 197 253;
+  --switch-track-rgb: 21 25 36;
+  --switch-track-border-rgb: 66 74 94;
+  --switch-track-inner-rgb: 13 17 26;
+  --switch-track-inner-border-rgb: 86 95 118;
+  --switch-thumb-rgb: 56 189 248;
+  --switch-thumb-border-rgb: 125 211 252;
   --switch-label-active-rgb: 255 255 255;
-  --switch-label-inactive-rgb: 172 196 239;
+  --switch-label-inactive-rgb: 145 153 176;
+  --switch-label-human-inactive-rgb: 96 165 250;
+  --switch-label-agent-inactive-rgb: 250 204 21;
+
+  --selection-bg-rgb: 59 130 246;
 }
 
 /* ===========================
@@ -63,12 +74,7 @@ html {
 
 body {
   background-color: rgb(var(--brand-bg-rgb));
-  background-image: 
-    radial-gradient(900px 600px at 15% 10%, rgb(var(--theme-glow-rgb) / 0.12), transparent 60%),
-    radial-gradient(800px 550px at 85% 20%, rgb(var(--theme-glow-rgb) / 0.08), transparent 60%),
-    radial-gradient(1000px 700px at 70% 85%, rgb(var(--theme-glow-rgb) / 0.06), transparent 65%),
-    radial-gradient(1200px 900px at 50% 50%, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.9));
-  background-attachment: fixed;
+  background-image: none;
   color: rgb(var(--brand-text-rgb));
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.6;
@@ -76,13 +82,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html[data-site-mode='agent'] .hero-github-cta {
+  color: #000 !important;
+}
+
+::selection {
+  background-color: rgb(var(--selection-bg-rgb) / 0.95);
+  color: #000;
+}
+
+::-moz-selection {
+  background-color: rgb(var(--selection-bg-rgb) / 0.95);
+  color: #000;
+}
+
 a {
-  color: rgb(var(--brand-accent-rgb));
   text-decoration: none;
   transition: color 0.2s;
 }
 
-a:hover {
+a:not([class]) {
+  color: rgb(var(--brand-accent-rgb));
+}
+
+a:not([class]):hover {
   color: rgb(var(--brand-accent-light-rgb));
 }
 
@@ -122,7 +145,7 @@ code {
   border-radius: 4px;
 }
 
-pre {
+pre:not(.code-terminal-section) {
   background-color: rgb(var(--brand-surface-code-rgb));
   border: 1px solid rgb(var(--brand-border-subtle-rgb) / 0.12);
   border-radius: 16px;

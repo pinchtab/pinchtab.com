@@ -1,0 +1,51 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+
+const envVars = [
+  {
+    name: 'BRIDGE_HEADLESS=false',
+    description: 'Open a visible Chrome window for debugging and real-time verification.',
+  },
+  {
+    name: 'BRIDGE_NO_RESTORE=true',
+    description: "Don't restore tabs on startup. Useful for testing and fresh sessions.",
+  },
+  {
+    name: 'BRIDGE_TOKEN=your-secret',
+    description: 'Enable bearer token auth for network-exposed hosts.',
+  },
+  {
+    name: 'BRIDGE_PORT=8080',
+    description: 'Change the server port (default is 9867).',
+  },
+  {
+    name: 'BRIDGE_BLOCK_IMAGES=true',
+    description: 'Block image loading for faster page reads.',
+  },
+  {
+    name: 'BRIDGE_STEALTH=full',
+    description: 'Use maximum stealth mode (default is light).',
+  },
+];
+---
+
+<section>
+  <SectionHeading
+    label="Advanced Options"
+    title="Tune Pinchtab for your use case"
+    description="Common environment variables to customize behavior."
+  />
+
+  <div class="grid gap-4">
+    {
+      envVars.map((envVar) => (
+        <article class="rounded-xl border border-brand-border-subtle bg-brand-surface/40 p-4 transition-colors duration-200 hover:border-brand-border hover:bg-brand-surface-hover/55 sm:p-5">
+          <p class="mb-2 font-mono text-sm font-semibold text-brand-accent">
+            <code>{envVar.name}</code>
+          </p>
+          <p class="text-sm leading-6 text-brand-text-muted">{envVar.description}</p>
+        </article>
+      ))
+    }
+  </div>
+</section>

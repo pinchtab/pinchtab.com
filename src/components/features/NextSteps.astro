@@ -1,0 +1,74 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import { cn } from '@/lib/utils';
+
+const workflows = [
+  {
+    title: 'Example 1: Extract and export Hacker News as PDF',
+    lines: [
+      'curl localhost:9867/navigate -d \'{"url":"https://news.ycombinator.com"}\'',
+      'curl localhost:9867/text',
+      'curl localhost:9867/pdf --output news.pdf',
+    ],
+  },
+  {
+    title: 'Example 2: Search for a product and click the result',
+    lines: [
+      'curl localhost:9867/navigate -d \'{"url":"https://www.example-shop.com"}\'',
+      'curl localhost:9867/snapshot?filter=interactive',
+      'curl -X POST localhost:9867/action -d \'{"kind":"type","ref":"e2","text":"laptop"}\'',
+      'curl -X POST localhost:9867/action -d \'{"kind":"click","ref":"e5"}\'',
+    ],
+  },
+  {
+    title: 'Example 3: Fill a contact form and submit',
+    lines: [
+      'curl localhost:9867/navigate -d \'{"url":"https://example.com/contact"}\'',
+      'curl -X POST localhost:9867/action -d \'{"kind":"type","ref":"e1","text":"John Doe"}\'',
+      'curl -X POST localhost:9867/action -d \'{"kind":"type","ref":"e2","text":"john@example.com"}\'',
+      'curl -X POST localhost:9867/action -d \'{"kind":"click","ref":"submit"}\'',
+    ],
+  },
+];
+---
+
+<section>
+  <SectionHeading
+    label="Next Steps"
+    title="Real-world examples"
+    description="Start the server and try these workflows"
+  />
+
+  <div
+    class={cn(
+      'overflow-hidden rounded-2xl border border-brand-border-subtle bg-brand-surface-code',
+      'shadow-[0_0_40px_rgb(var(--brand-accent-rgb)/0.08)]'
+    )}
+  >
+    <div class="flex items-center gap-2 border-b border-brand-border-subtle bg-[rgb(var(--brand-bg-rgb)/0.35)] px-4 py-3">
+      <span class="h-2.5 w-2.5 rounded-full bg-brand-red" aria-hidden="true"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-brand-accent" aria-hidden="true"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-brand-green" aria-hidden="true"></span>
+      <span class="ml-auto text-xs uppercase tracking-[0.12em] text-brand-text-dim">terminal</span>
+    </div>
+
+    <div class="space-y-6 p-5 font-mono text-[0.8rem] leading-7 sm:p-6">
+      {
+        workflows.map((workflow, index) => (
+          <div class={cn(index > 0 && 'border-t border-brand-border-subtle pt-5')}>
+            <p class="mb-2 text-brand-text-dim">
+              # {workflow.title}
+            </p>
+            {
+              workflow.lines.map((line, lineIndex) => (
+                <p class={lineIndex === 0 ? 'text-brand-accent' : 'text-brand-text-muted'}>
+                  {line}
+                </p>
+              ))
+            }
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

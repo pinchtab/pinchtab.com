@@ -1,12 +1,16 @@
 ---
 import { cn } from '@/lib/utils';
 
+type AnimationVariant = 'swoop' | 'pop' | 'glide';
+
 interface Props {
   humanImage: string;
   agentImage: string;
   alt?: string;
   class?: string;
   className?: string;
+  agentSizeMultiplier?: number;
+  animationVariant?: AnimationVariant;
 }
 
 const {
@@ -15,12 +19,37 @@ const {
   alt = 'PinchTab mascot',
   class: classProp,
   className = 'h-32 w-32 sm:h-40 sm:w-40 object-contain',
+  agentSizeMultiplier = 1.45,
+  animationVariant = 'swoop',
 } = Astro.props;
 
 const imageClass = cn(className, classProp);
+
+const transformsByVariant: Record<AnimationVariant, { hidden: string; visible: string }> = {
+  swoop: {
+    hidden: 'translate(-50%, -50%) scale(0.88) rotate(12deg)',
+    visible: 'translate(-50%, -50%) scale(1.1) rotate(0deg)',
+  },
+  pop: {
+    hidden: 'translate(-50%, -50%) scale(0.74) rotate(5deg)',
+    visible: 'translate(-50%, -50%) scale(1.2) rotate(-2deg)',
+  },
+  glide: {
+    hidden: 'translate(-46%, -52%) scale(0.9) rotate(8deg)',
+    visible: 'translate(-50%, -50%) scale(1.08) rotate(0deg)',
+  },
+};
+
+const activeTransform = transformsByVariant[animationVariant] || transformsByVariant.swoop;
+const agentSizePercent = `${agentSizeMultiplier * 100}%`;
 ---
 
-<div class="relative overflow-visible" data-mascot-crossfade>
+<div
+  class="relative overflow-visible"
+  data-mascot-crossfade
+  data-agent-hidden-transform={activeTransform.hidden}
+  data-agent-visible-transform={activeTransform.visible}
+>
   <img
     data-mascot-human
     src={humanImage}
@@ -41,7 +70,7 @@ const imageClass = cn(className, classProp);
       'absolute left-1/2 top-1/2 transition-all duration-500 ease-snappy',
       'opacity-0'
     )}
-    style="width: 140%; height: 140%; transform: translate(-50%, -50%) scale(0.9) rotate(12deg);"
+    style={`width: ${agentSizePercent}; height: ${agentSizePercent}; transform: ${activeTransform.hidden};`}
   />
 </div>
 
@@ -59,6 +88,10 @@ const imageClass = cn(className, classProp);
       if (!humanEl || !agentEl) return;
 
       const isAgent = normalizeMode(mode) === 'agent';
+      const hiddenTransform =
+        root.dataset.agentHiddenTransform || 'translate(-50%, -50%) scale(0.88) rotate(12deg)';
+      const visibleTransform =
+        root.dataset.agentVisibleTransform || 'translate(-50%, -50%) scale(1.1) rotate(0deg)';
 
       humanEl.classList.toggle('opacity-0', isAgent);
       humanEl.classList.toggle('scale-90', isAgent);
@@ -69,9 +102,7 @@ const imageClass = cn(className, classProp);
 
       agentEl.classList.toggle('opacity-100', isAgent);
       agentEl.classList.toggle('opacity-0', !isAgent);
-      agentEl.style.transform = isAgent
-        ? 'translate(-50%, -50%) scale(1) rotate(0deg)'
-        : 'translate(-50%, -50%) scale(0.9) rotate(12deg)';
+      agentEl.style.transform = isAgent ? visibleTransform : hiddenTransform;
     };
 
     const applyAll = (mode) => {

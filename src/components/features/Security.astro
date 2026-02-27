@@ -1,0 +1,41 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+
+const checks = [
+  'You are responsible for what agents do with your accounts.',
+  'Set BRIDGE_TOKEN so random clients cannot control your browser.',
+  'Treat ~/.pinchtab/ as sensitive because it stores active sessions.',
+  'Start with low-risk accounts before touching production data.',
+  'No data leaves your machine by default, but connected agents can still exfiltrate it.',
+];
+---
+
+<section id="security">
+  <SectionHeading
+    label="Security"
+    title="Your browser, your responsibility"
+    description="Pinchtab gives agents full control of a real logged-in browser, so your security boundaries are your own."
+  />
+
+  <div class="flex gap-4 rounded-2xl border border-brand-border bg-brand-accent/6 p-5 sm:gap-5 sm:p-7">
+    <div class="text-3xl leading-none">⚠️</div>
+    <div>
+      <p class="mb-4 text-sm leading-7 text-brand-text-muted">
+        When you log into sites through Pinchtab's Chrome window, those sessions persist. Any agent with HTTP access can act as you.
+      </p>
+      <ul class="space-y-2">
+        {
+          checks.map((check) => (
+            <li class="relative pl-5 text-sm leading-6 text-brand-text-muted">
+              <span class="absolute left-0 top-0 text-brand-accent">→</span>
+              {check}
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-4 text-xs text-brand-text-dim">
+        Think of this as giving an unlocked laptop to someone you trust.
+      </p>
+    </div>
+  </div>
+</section>

@@ -1,49 +1,33 @@
 ---
-import { cn } from '@/lib/utils';
-
 const footerLinks = [
-  { label: 'Features', href: '/#features' },
-  { label: 'Install', href: 'https://pinchtab.com/install.sh' },
-  { label: 'GitHub', href: 'https://github.com/pinchtab' },
+  { label: 'GitHub', href: 'https://github.com/pinchtab/pinchtab' },
+  { label: 'Latest Release', href: 'https://github.com/pinchtab/pinchtab/releases/latest' },
+  { label: 'Docs', href: 'https://github.com/pinchtab/pinchtab/blob/main/skill/pinchtab/SKILL.md' },
+  { label: 'Agent Optimization', href: 'https://github.com/pinchtab/pinchtab/blob/main/docs/agent-optimization.md' },
+  { label: 'Issues', href: 'https://github.com/pinchtab/pinchtab/issues' },
 ];
-
-const currentYear = new Date().getFullYear();
 ---
 
-<footer
-  class={cn(
-    'py-16 bg-brand-bg'
-  )}
->
-  <div class="container-custom">
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-8">
-      <!-- Brand -->
-      <div class="flex items-center gap-3">
-        <img src="/favicon.png" alt="" class="w-10 h-10 rounded-sm" />
-        <span class="font-bold text-lg">PinchTab</span>
-      </div>
+<footer class="border-t border-brand-border-subtle px-6 py-12 sm:px-8">
+  <div class="mx-auto max-w-[1080px] text-center">
+    <nav aria-label="Footer navigation" class="mb-5 flex flex-wrap items-center justify-center gap-4 sm:gap-5">
+      {
+        footerLinks.map((link) => (
+          <a
+            href={link.href}
+            class="text-sm text-brand-text-muted transition-colors hover:text-brand-accent"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
 
-      <!-- Links -->
-      <nav aria-label="Footer navigation" class="flex gap-6">
-        {
-          footerLinks.map((link) => (
-            <a
-              href={link.href}
-              class={cn(
-                'text-sm transition-colors',
-                'text-brand-text-muted hover:text-brand-accent'
-              )}
-            >
-              {link.label}
-            </a>
-          ))
-        }
-      </nav>
-
-      <!-- Copyright -->
-      <p class="text-xs text-brand-text-dim order-last sm:order-none w-full sm:w-auto text-center sm:text-right">
-        &copy; {currentYear} PinchTab. All rights reserved.
-      </p>
-    </div>
+    <p class="text-xs leading-6 text-brand-text-dim">
+      Built by Bosch and Mario, digital brothers with a soul, by{' '}
+      <a href="https://github.com/luigi-agosti" class="text-brand-text-dim underline-offset-2 transition-colors hover:text-brand-accent">Luigi Agosti</a>{' '}
+      · MIT License · Works with{' '}
+      <a href="https://openclaw.ai" class="text-brand-text-dim underline-offset-2 transition-colors hover:text-brand-accent">OpenClaw</a>
+    </p>
   </div>
 </footer>

@@ -1,0 +1,61 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+
+const cards = [
+  {
+    title: 'Go Install',
+    lines: ['go install github.com/pinchtab/pinchtab@latest'],
+  },
+  {
+    title: 'Build from source',
+    lines: [
+      'git clone https://github.com/pinchtab/pinchtab.git',
+      'cd pinchtab && go build -o pinchtab .',
+      './pinchtab',
+    ],
+  },
+  {
+    title: 'Environment',
+    lines: [
+      'BRIDGE_PORT=9867',
+      'BRIDGE_TOKEN=your-secret',
+      'BRIDGE_HEADLESS=true',
+      'BRIDGE_NO_RESTORE=true',
+    ],
+  },
+  {
+    title: 'With your AI agent',
+    lines: [
+      '# Ask your agent:',
+      '"Install Pinchtab and set it up',
+      'for browser automation."',
+    ],
+  },
+];
+---
+
+<section>
+  <SectionHeading
+    label="Configuration"
+    title="All env vars. Zero files."
+  />
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    {
+      cards.map((card) => (
+        <article class="rounded-2xl border border-brand-border-subtle bg-brand-surface p-5">
+          <h3 class="mb-3 text-base font-semibold text-brand-text">{card.title}</h3>
+          <div class="rounded-xl border border-brand-border-subtle bg-brand-surface-code p-3 font-mono text-xs leading-6 text-brand-text-muted">
+            {
+              card.lines.map((line) => (
+                <p class={line.startsWith('#') ? 'text-brand-text-dim' : 'text-brand-accent'}>
+                  {line}
+                </p>
+              ))
+            }
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>

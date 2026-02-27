@@ -9,16 +9,16 @@ const { class: className } = Astro.props;
 ---
 
 <div class={cn(
-  'fixed top-4 right-4 sm:top-6 sm:right-6 z-[120]',
+  'fixed top-4 right-4 sm:top-6 sm:right-6 z-120',
   className
 )}>
   <button
     type="button"
     class={cn(
-      'group relative h-11 w-48 rounded-xl border transition-all duration-300',
-      'bg-[rgb(var(--switch-track-rgb)/0.98)]',
-      'border-[rgb(var(--switch-track-border-rgb)/0.9)]',
-      'shadow-[0_10px_24px_rgba(0,0,0,0.30)]',
+      'group relative h-10 w-44 sm:h-11 sm:w-48 rounded-full border transition-all duration-300',
+      'bg-[linear-gradient(120deg,rgba(24,27,38,0.96),rgba(17,20,30,0.98))]',
+      'border-[rgb(var(--switch-track-border-rgb)/0.58)]',
+      'shadow-[0_14px_30px_rgba(0,0,0,0.34)]',
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/50',
       'focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg',
       'active:scale-[0.99] select-none'
@@ -29,16 +29,16 @@ const { class: className } = Astro.props;
     aria-label="Switch between human and agent mode"
   >
     <span
-      class="pointer-events-none absolute inset-[2px] rounded-[10px] border bg-[rgb(var(--switch-track-inner-rgb)/0.9)] border-[rgb(var(--switch-track-inner-border-rgb)/0.25)]"
+      class="pointer-events-none absolute inset-0.5 rounded-full border bg-[rgb(var(--switch-track-inner-rgb)/0.74)] border-[rgb(var(--switch-track-inner-border-rgb)/0.2)]"
       aria-hidden="true"
     ></span>
 
     <span
       class={cn(
-        'absolute left-[2px] top-[2px] z-20 h-[38px] w-[calc(50%-2px)] rounded-[8px] border',
+        'absolute left-1 top-1 z-20 h-[calc(100%-8px)] w-[calc(50%-6px)] rounded-2xl border',
         'bg-[rgb(var(--switch-thumb-rgb)/1)]',
         'border-[rgb(var(--switch-thumb-border-rgb)/0.9)]',
-        'shadow-[0_8px_18px_rgba(0,0,0,0.34),inset_0_1px_1px_rgba(255,255,255,0.5)]',
+        'shadow-[0_10px_20px_rgba(0,0,0,0.34),inset_0_1px_1px_rgba(255,255,255,0.35)]',
         'transition-all duration-300 ease-snappy will-change-transform'
       )}
       data-mode-thumb
@@ -50,12 +50,12 @@ const { class: className } = Astro.props;
     <span
       class={cn(
         'relative z-10 grid h-full w-full grid-cols-2 items-center',
-        'text-[10px] font-semibold uppercase tracking-[0.16em]'
+        'px-2 text-[0.68rem] sm:text-[0.74rem] font-bold uppercase tracking-[0.08em]'
       )}
       aria-hidden="true"
     >
-      <span class="text-center transition-colors duration-300 text-[rgb(var(--switch-label-active-rgb)/1)]" data-mode-label-human>Humans</span>
-      <span class="text-center transition-colors duration-300 text-[rgb(var(--switch-label-inactive-rgb)/1)]" data-mode-label-agent>Agents</span>
+      <span class="text-center transition-all duration-300 text-[rgb(var(--switch-label-active-rgb)/1)]" data-mode-label-human>Humans</span>
+      <span class="text-center transition-all duration-300 text-[rgb(var(--switch-label-active-rgb)/1)]" data-mode-label-agent>Agents</span>
     </span>
   </button>
 </div>
@@ -103,11 +103,13 @@ const { class: className } = Astro.props;
       thumb.style.transform = isAgent ? `translateX(${travelX}px)` : 'translateX(0px)';
 
       humanLabel.style.color = isAgent
-        ? 'rgb(var(--switch-label-inactive-rgb) / 1)'
-        : '#0a0a0a';
+        ? 'rgb(var(--switch-label-human-inactive-rgb) / 0.95)'
+        : 'rgb(var(--switch-label-active-rgb) / 1)';
       agentLabel.style.color = isAgent
-        ? '#ffffff'
-        : 'rgb(var(--switch-label-inactive-rgb) / 1)';
+        ? 'rgb(var(--switch-label-active-rgb) / 1)'
+        : 'rgb(var(--switch-label-agent-inactive-rgb) / 0.95)';
+      humanLabel.style.opacity = '1';
+      agentLabel.style.opacity = '1';
     };
 
     const applyAll = (mode, dispatch = false) => {

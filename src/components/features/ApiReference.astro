@@ -1,0 +1,101 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+
+const endpoints = [
+  ['GET', '/health', 'Connection status'],
+  ['GET', '/tabs', 'List open tabs'],
+  ['GET', '/snapshot', 'Accessibility tree — primary interface'],
+  ['GET', '/screenshot', 'JPEG screenshot'],
+  ['GET', '/text', 'Readable text — readability or raw'],
+  ['GET', '/pdf', 'Export page as PDF'],
+  ['POST', '/navigate', 'Go to URL'],
+  ['POST', '/action', 'Click, type, fill, press, hover, select, scroll'],
+  ['POST', '/evaluate', 'Execute JavaScript'],
+  ['POST', '/tab', 'Open / close tabs'],
+];
+
+const examples = [
+  {
+    title: 'Read a page',
+    curl: 'curl http://localhost:9867/text?format=readability',
+    cli: 'pinchtab text',
+  },
+  {
+    title: 'Snapshot',
+    curl: 'curl http://localhost:9867/snapshot?filter=interactive',
+    cli: 'pinchtab snap --filter interactive',
+  },
+  {
+    title: 'Click by ref',
+    curl: 'curl -X POST http://localhost:9867/action -H "Content-Type: application/json" -d \'{"kind":"click","ref":"e5"}\'',
+    cli: 'pinchtab action click e5',
+  },
+  {
+    title: 'Navigate',
+    curl: 'curl -X POST http://localhost:9867/navigate -H "Content-Type: application/json" -d \'{"url":"https://example.com"}\'',
+    cli: 'pinchtab nav https://example.com',
+  },
+];
+---
+
+<section id="api">
+  <SectionHeading
+    label="Full API"
+    title="Few endpoints. That's it."
+    description="Read-only GETs for data, POSTs for mutations. All JSON."
+  />
+
+  <div class="overflow-x-auto rounded-2xl border border-brand-border-subtle bg-brand-surface">
+    <table class="w-full min-w-[680px] border-collapse text-left text-sm">
+      <thead>
+        <tr class="border-b border-brand-border-subtle">
+          <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.06em] text-brand-text-dim">Method</th>
+          <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.06em] text-brand-text-dim">Endpoint</th>
+          <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.06em] text-brand-text-dim">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          endpoints.map(([method, endpoint, description], index) => (
+            <tr class={index < endpoints.length - 1 ? 'border-b border-brand-border-subtle' : ''}>
+              <td class="px-5 py-3">
+                <span
+                  class:list={[
+                    'rounded px-2 py-1 font-mono text-xs font-semibold',
+                    method === 'GET'
+                      ? 'bg-brand-green/10 text-brand-green'
+                      : 'bg-brand-accent/10 text-brand-accent',
+                  ]}
+                >
+                  {method}
+                </span>
+              </td>
+              <td class="px-5 py-3 font-mono text-xs text-brand-text">
+                <code>{endpoint}</code>
+              </td>
+              <td class="px-5 py-3 text-brand-text-muted">{description}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-6 grid gap-4 sm:grid-cols-2">
+    {
+      examples.map((example) => (
+        <article class="rounded-xl border border-brand-border-subtle bg-brand-surface p-5">
+          <h3 class="mb-4 text-sm font-semibold uppercase tracking-[0.06em] text-brand-accent">{example.title}</h3>
+          <p class="mb-2 text-xs uppercase tracking-[0.08em] text-brand-text-dim">curl</p>
+          <code class="mb-4 block overflow-x-auto rounded-md border border-brand-border-subtle bg-brand-surface-code p-3 font-mono text-xs leading-6 text-brand-text-muted">
+            {example.curl}
+          </code>
+          <p class="mb-2 text-xs uppercase tracking-[0.08em] text-brand-text-dim">CLI</p>
+          <code class="block overflow-x-auto rounded-md border border-brand-border-subtle bg-brand-surface-code p-3 font-mono text-xs leading-6 text-brand-text-muted">
+            {example.cli}
+          </code>
+        </article>
+      ))
+    }
+  </div>
+</section>

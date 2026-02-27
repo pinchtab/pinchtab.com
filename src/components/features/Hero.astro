@@ -1,15 +1,17 @@
 ---
 import HumanAgentToggle from '@/components/ui/HumanAgentToggle.astro';
 import MascotCrossfade from '@/components/ui/MascotCrossfade.astro';
+import Button from '@/components/ui/Button.astro';
+import Pill from '@/components/ui/Pill.astro';
 import { cn } from '@/lib/utils';
 
-const featurePills = ['Go', '12MB binary', 'HTTP API', 'MIT license', 'Zero config'];
+const featurePills = ['Go', 'Compact binary', 'MIT license', 'CLI or curl'];
 ---
 
 <section
   class={cn(
-    'relative isolate min-h-screen flex items-center justify-center',
-    'pt-[80px] pb-[60px] px-6 sm:px-8 overflow-hidden'
+    'relative isolate flex items-center justify-center',
+    'pt-20 pb-15 px-6 sm:px-8 overflow-hidden'
   )}
 >
   <HumanAgentToggle />
@@ -18,21 +20,23 @@ const featurePills = ['Go', '12MB binary', 'HTTP API', 'MIT license', 'Zero conf
   <div
     class={cn(
       'pointer-events-none absolute left-1/2 z-0',
-      'h-[860px] w-[860px] -translate-x-1/2 rounded-full'
+      'h-215 w-215 -translate-x-1/2 rounded-full'
     )}
-    style="top: -320px; background: radial-gradient(circle, rgb(var(--brand-accent-rgb) / 0.12) 0%, rgb(var(--brand-accent-rgb) / 0.05) 42%, transparent 72%);"
+    style="top: -300px; background: radial-gradient(circle, rgb(var(--brand-accent-rgb) / 0.12) 0%, rgb(var(--brand-accent-rgb) / 0.05) 42%, transparent 72%);"
     aria-hidden="true"
   />
 
   <!-- Content -->
-  <div class="relative z-10 max-w-4xl mx-auto -translate-y-16 sm:-translate-y-20 lg:-translate-y-24 text-center">
-    <!-- Mascot with crossfade -->
+  <div class="relative z-10 max-w-4xl mx-auto pt-12 text-center">
+    <!-- Mascot -->
     <div class="relative z-10 mb-4 flex justify-center">
       <div class="relative">
         <MascotCrossfade
           humanImage="/mascot.png"
           agentImage="/mascot-agent.png"
           alt="PinchTab mascot"
+          agentSizeMultiplier={1.58}
+          animationVariant="pop"
           className="h-40 w-40 sm:h-48 sm:w-48 lg:h-56 lg:w-56 -translate-y-4 sm:-translate-y-6 lg:-translate-y-8 object-contain drop-shadow-[0_0_30px_rgb(var(--brand-accent-rgb)/0.2)]"
         />
       </div>
@@ -55,11 +59,7 @@ const featurePills = ['Go', '12MB binary', 'HTTP API', 'MIT license', 'Zero conf
     <!-- Positioning line -->
     <div
       id="tagline"
-      class={cn(
-        'font-medium uppercase',
-        'text-base tracking-[0.15em]',
-        'text-brand-accent mb-5'
-      )}
+      class={cn('mb-5 text-base font-medium uppercase tracking-[0.15em] text-brand-accent')}
     >
       Browser control for AI agents
     </div>
@@ -67,92 +67,88 @@ const featurePills = ['Go', '12MB binary', 'HTTP API', 'MIT license', 'Zero conf
     <!-- Supporting description -->
     <p class={cn(
       'text-[1.15rem] text-brand-text-muted leading-[1.7]',
-      'max-w-[520px] mx-auto mb-8'
+      'max-w-130 mx-auto mb-8'
     )}>
-      12MB Go binary. Launches Chrome, exposes an HTTP API. Any agent, any language, even curl.
+      12MB Go binary. Launches Chrome, exposes an HTTP API. <span id="hero-supporting-tail">Any agent, any language, even curl.</span>
     </p>
 
     <!-- Feature pills -->
-    <div class="mb-[36px] flex flex-wrap items-center justify-center gap-[10px]">
+    <div class="mb-9 flex flex-wrap items-center justify-center gap-2.5">
       {
         featurePills.map((pill) => {
-          const highlighted = pill === 'HTTP API';
           return (
-            <span
-              class={cn(
-                'inline-flex items-center rounded-[20px] border',
-                'px-[14px] py-[5px]',
-                'text-[0.72rem] font-mono font-medium tracking-[0.01em]',
-                highlighted
-                  ? 'border-[rgba(251,191,36,0.30)] bg-[rgba(251,191,36,0.08)] text-brand-accent'
-                  : 'border-brand-border-subtle bg-[rgba(255,255,255,0.03)] text-brand-text-muted'
-              )}
-            >
+            <Pill>
               {pill}
-            </span>
+            </Pill>
           );
         })
       }
     </div>
 
     <!-- CTA Buttons -->
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-[14px]">
-      <a
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+      <Button
         href="https://github.com/pinchtab/pinchtab"
+        variant="primary"
+        size="md"
         class={cn(
-          'inline-flex items-center justify-center',
+          'hero-github-cta',
           'w-full sm:w-auto h-12 px-7 rounded-[10px]',
-          'font-semibold text-[0.9rem] leading-none',
-          'bg-brand-accent text-brand-bg border border-transparent',
           'shadow-[0_8px_18px_rgb(var(--brand-accent-rgb)/0.22)]',
-          'transition-all duration-200',
-          'hover:bg-brand-accent-light hover:-translate-y-px hover:shadow-[0_12px_24px_rgb(var(--brand-accent-rgb)/0.28)]',
-          'active:translate-y-0'
+          'hover:-translate-y-px hover:shadow-[0_12px_24px_rgb(var(--brand-accent-rgb)/0.28)]',
+          'active:translate-y-0 text-[0.9rem]'
         )}
       >
         View on GitHub
-      </a>
-      <a
+      </Button>
+      <Button
         href="/#quickstart"
+        variant="secondary"
+        size="md"
         class={cn(
-          'inline-flex items-center justify-center',
           'w-full sm:w-auto h-12 px-7 rounded-[10px]',
-          'font-semibold text-[0.9rem] leading-none',
-          'bg-[rgba(255,255,255,0.05)] border border-[rgb(var(--brand-border-subtle-rgb)/0.20)]',
-          'text-brand-text',
           'shadow-[inset_0_1px_0_rgb(255_255_255/0.03)]',
-          'transition-all duration-200',
-          'hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgb(var(--brand-border-subtle-rgb)/0.34)] hover:-translate-y-px'
+          'hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgb(var(--brand-border-subtle-rgb)/0.34)] hover:-translate-y-px',
+          'text-[0.9rem]'
         )}
       >
         Quick Start
-      </a>
+      </Button>
     </div>
   </div>
 </section>
 
 <script is:inline>
-  const normalizeMode = (mode) => mode === 'agent' || mode === 'agents' ? 'agent' : 'human';
+  const normalizeMode = (mode) => (mode === 'agent' || mode === 'agents' ? 'agent' : 'human');
 
   function updateTagline(mode) {
     const taglineEl = document.getElementById('tagline');
     if (!taglineEl) return;
 
-    if (normalizeMode(mode) === 'agent') {
-      taglineEl.textContent = 'The browser you deserve';
-    } else {
-      taglineEl.textContent = 'Browser control for AI agents';
-    }
+    taglineEl.textContent =
+      normalizeMode(mode) === 'agent'
+        ? 'The browser you deserve'
+        : 'Browser control for AI agents';
   }
 
-  // Listen for mode changes
+  function updateSupportingCopy(mode) {
+    const supportingTailEl = document.getElementById('hero-supporting-tail');
+    if (!supportingTailEl) return;
+
+    supportingTailEl.textContent =
+      normalizeMode(mode) === 'agent'
+        ? 'No discrimination with easy curl or cli accessibility.'
+        : 'Any agent, low token usage cost with cli or curl.';
+  }
+
   document.addEventListener('modechange', (event) => {
     updateTagline(event.detail.mode);
+    updateSupportingCopy(event.detail.mode);
   });
 
-  // Initialize with stored mode on page load
   window.addEventListener('DOMContentLoaded', () => {
     const stored = localStorage.getItem('pinchtab-mode') || 'human';
     updateTagline(stored);
+    updateSupportingCopy(stored);
   });
 </script>

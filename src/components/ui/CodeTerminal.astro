@@ -11,92 +11,84 @@ export interface Props {
   tabs: CodeTab[];
   defaultTab?: string;
   class?: string;
+  terminalLabel?: string;
 }
 
-const { tabs, defaultTab = tabs[0]?.method || 'default', class: className } = Astro.props;
+const {
+  tabs,
+  defaultTab = tabs[0]?.method || 'default',
+  class: className,
+  terminalLabel = 'terminal',
+} = Astro.props;
 ---
 
-<div class={cn(
-  'rounded-2xl overflow-hidden',
-  'bg-gradient-to-br from-slate-900 to-slate-950',
-  'border border-white/8',
-  'shadow-xl shadow-black/50',
-  'my-6',
-  className
-)}>
-  <!-- Header -->
-  <div class="h-12 px-5 flex items-center gap-4 border-b border-white/8 bg-gradient-to-b from-slate-800/40 to-slate-900/20">
-    <!-- Traffic Lights -->
+<div
+  class={cn(
+    'my-6 overflow-hidden rounded-2xl border border-brand-border-subtle bg-brand-surface-code shadow-[0_0_40px_rgb(var(--brand-accent-rgb)/0.08)]',
+    className
+  )}
+  data-code-terminal
+>
+  <div class="flex h-12 items-center gap-4 border-b border-brand-border-subtle bg-[rgb(var(--brand-bg-rgb)/0.35)] px-5">
     <div class="flex gap-2">
-      <div class="w-3 h-3 rounded-full bg-red-500 shadow-sm"></div>
-      <div class="w-3 h-3 rounded-full bg-yellow-400 shadow-sm"></div>
-      <div class="w-3 h-3 rounded-full bg-green-500 shadow-sm"></div>
+      <span class="h-2.5 w-2.5 rounded-full bg-brand-red" aria-hidden="true"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-brand-accent" aria-hidden="true"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-brand-green" aria-hidden="true"></span>
     </div>
 
-    <!-- Tabs -->
-    <div class="flex gap-2 ml-2">
-      {tabs.map((tab) => (
-        <button
-          class={cn(
-            'code-tab px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer',
-            tab.method === defaultTab
-              ? 'bg-yellow-400 text-slate-950 shadow-md'
-              : 'bg-transparent text-slate-400 hover:bg-white/5'
-          )}
-          data-method={tab.method}
-          onclick={`switchTab(event, '${tab.method}')`}
-        >
-          {tab.label}
-        </button>
-      ))}
+    <div class="ml-1 flex flex-wrap gap-2">
+      {
+        tabs.map((tab) => (
+          <button
+            type="button"
+            class={cn(
+              'code-tab rounded-md border px-2.5 py-1 text-xs font-semibold transition-all duration-150',
+              tab.method === defaultTab
+                ? 'border-brand-accent bg-brand-accent text-[rgb(var(--brand-bg-rgb)/1)]'
+                : 'border-brand-border-subtle text-brand-text-muted hover:border-brand-border hover:text-brand-text'
+            )}
+            data-method={tab.method}
+          >
+            {tab.label}
+          </button>
+        ))
+      }
     </div>
 
-    <!-- Language Label (Right) -->
-    <div class="ml-auto text-xs text-slate-500 tracking-wider opacity-60 font-mono">
-      terminal
-    </div>
+    <span class="ml-auto text-xs uppercase tracking-[0.12em] text-brand-text-dim">
+      {terminalLabel}
+    </span>
   </div>
 
-  <!-- Body -->
-  <div class="relative px-6 py-6 bg-gradient-to-b from-slate-900 to-slate-950">
-    <!-- Code Sections -->
-    <pre class="font-mono text-sm leading-relaxed whitespace-pre-wrap overflow-x-auto">
-{tabs.map((tab) => {
-  const lines = tab.code.split('\n');
-  return (
-    <div
-      class={cn(
-        'code-terminal-section',
-        tab.method !== defaultTab && 'hidden'
-      )}
-      data-method={tab.method}
-    >
-{lines.map((line) => {
-  const isComment = line.trim().startsWith('#');
-  return (
-    <code class={isComment ? 'text-slate-500' : 'text-yellow-300'}>
-      {line}
-      {'\n'}
-    </code>
-  );
-})}
-    </div>
-  );
-})}
-    </pre>
+  <div class="relative px-6 py-5">
+    {
+      tabs.map((tab) => {
+        const lines = tab.code.split('\n');
+        return (
+          <pre
+            class={cn(
+              'code-terminal-section overflow-x-auto whitespace-pre-wrap pb-10 font-mono text-[0.82rem] leading-[1.8] text-brand-text-muted',
+              'm-0 border-0 bg-transparent p-0 text-left shadow-none',
+              tab.method !== defaultTab && 'hidden'
+            )}
+            data-method={tab.method}
+          >{lines.map((line) => {
+            const isComment = line.trim().startsWith('#');
+            return <span class={cn('block', isComment ? 'text-brand-text-dim' : 'text-brand-accent')}>{line}</span>;
+          })}</pre>
+        );
+      })
+    }
 
-    <!-- Copy Button -->
     <button
+      type="button"
       class={cn(
-        'copy-btn absolute bottom-4 right-4',
-        'px-2.5 py-1 text-xs font-semibold rounded-lg',
-        'bg-yellow-400 text-slate-950',
-        'hover:bg-yellow-300',
-        'transition-all duration-150 cursor-pointer',
-        'shadow-md hover:shadow-lg'
+        'copy-btn absolute bottom-3 right-3 rounded border px-2.5 py-1 text-xs font-semibold transition-colors',
+        'border-brand-accent bg-brand-accent text-[rgb(var(--brand-bg-rgb)/1)]',
+        'hover:bg-brand-accent-light'
       )}
-      onclick="copyCode(event)"
-      title="Copy command"
+      data-copy-btn
+      title="Copy active command"
     >
       CP
     </button>
@@ -104,62 +96,65 @@ const { tabs, defaultTab = tabs[0]?.method || 'default', class: className } = As
 </div>
 
 <script is:inline>
-  function switchTab(event, method) {
-    const container = event.target.closest('div');
-    const allTabs = container.querySelectorAll('.code-tab');
-    const allSections = container.querySelectorAll('.code-terminal-section');
+  (() => {
+    const roots = Array.from(document.querySelectorAll('[data-code-terminal]'));
+    if (!roots.length) return;
 
-    allTabs.forEach(tab => {
-      if (tab.dataset.method === method) {
-        tab.className = 'code-tab px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer bg-yellow-400 text-slate-950 shadow-md';
-      } else {
-        tab.className = 'code-tab px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer bg-transparent text-slate-400 hover:bg-white/5';
+    const activeTabClasses = ['border-brand-accent', 'bg-brand-accent', 'text-[rgb(var(--brand-bg-rgb)/1)]'];
+    const inactiveTabClasses = ['border-brand-border-subtle', 'text-brand-text-muted'];
+
+    roots.forEach((root) => {
+      const tabs = Array.from(root.querySelectorAll('.code-tab'));
+      const sections = Array.from(root.querySelectorAll('.code-terminal-section'));
+      const copyButton = root.querySelector('[data-copy-btn]');
+
+      const setActiveTab = (method) => {
+        tabs.forEach((tab) => {
+          const isActive = tab.dataset.method === method;
+          tab.classList.toggle('hover:border-brand-border', !isActive);
+          tab.classList.toggle('hover:text-brand-text', !isActive);
+          activeTabClasses.forEach((className) => tab.classList.toggle(className, isActive));
+          inactiveTabClasses.forEach((className) => tab.classList.toggle(className, !isActive));
+        });
+
+        sections.forEach((section) => {
+          section.classList.toggle('hidden', section.dataset.method !== method);
+        });
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          if (!tab.dataset.method) return;
+          setActiveTab(tab.dataset.method);
+        });
+      });
+
+      if (copyButton) {
+        copyButton.addEventListener('click', () => {
+          const activeSection = root.querySelector('.code-terminal-section:not(.hidden)');
+          if (!activeSection) return;
+
+          const command = (activeSection.textContent || '')
+            .split('\n')
+            .filter((line) => !line.trim().startsWith('#'))
+            .join('\n')
+            .trim();
+
+          if (!command) return;
+
+          navigator.clipboard.writeText(command).then(() => {
+            copyButton.textContent = 'OK';
+            copyButton.classList.remove('bg-brand-accent', 'hover:bg-brand-accent-light');
+            copyButton.classList.add('bg-brand-green', 'border-brand-green');
+
+            setTimeout(() => {
+              copyButton.textContent = 'CP';
+              copyButton.classList.remove('bg-brand-green', 'border-brand-green');
+              copyButton.classList.add('bg-brand-accent', 'hover:bg-brand-accent-light');
+            }, 1400);
+          });
+        });
       }
     });
-
-    allSections.forEach(section => {
-      if (section.dataset.method === method) {
-        section.classList.remove('hidden');
-      } else {
-        section.classList.add('hidden');
-      }
-    });
-  }
-
-  function copyCode(event) {
-    const button = event.target;
-    const container = button.closest('div');
-    const activeSection = container.querySelector('.code-terminal-section:not(.hidden)');
-    
-    if (!activeSection) return;
-
-    const code = activeSection.textContent
-      .split('\n')
-      .filter(line => !line.trim().startsWith('#'))
-      .join('\n')
-      .trim();
-
-    navigator.clipboard.writeText(code).then(() => {
-      const original = button.textContent;
-      button.textContent = 'Copied!';
-      button.classList.remove('bg-yellow-400');
-      button.classList.add('bg-green-500');
-
-      setTimeout(() => {
-        button.textContent = original;
-        button.classList.remove('bg-green-500');
-        button.classList.add('bg-yellow-400');
-      }, 1500);
-    });
-  }
+  })();
 </script>
-
-<style>
-  .code-terminal-section {
-    display: block;
-  }
-
-  .code-terminal-section.hidden {
-    display: none;
-  }
-</style>

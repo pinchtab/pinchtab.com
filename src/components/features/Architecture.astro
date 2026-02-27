@@ -1,0 +1,47 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+---
+
+<section>
+  <SectionHeading
+    label="Architecture"
+    title="Simple by design"
+    description="One binary. One Chrome. HTTP in, CDP out."
+  />
+
+  <div class="rounded-2xl border border-brand-border-subtle bg-brand-surface-code p-6 shadow-[0_0_40px_rgb(var(--brand-accent-rgb)/0.08)]">
+    <div class="grid gap-4 lg:grid-cols-[1fr_auto_1.1fr_auto_1fr] lg:items-center">
+      <article class="rounded-xl border-2 border-brand-accent bg-brand-surface p-5 text-center">
+        <h3 class="mb-2 text-lg font-semibold text-brand-text">Any Agent</h3>
+        <p class="text-xs leading-5 text-brand-text-muted">(OpenClaw, PicoClaw, curl, scripts)</p>
+      </article>
+
+      <div class="flex items-center justify-center text-brand-accent lg:block">
+        <div class="hidden h-0.5 w-14 bg-brand-accent lg:block"></div>
+        <span class="text-lg lg:hidden">↓</span>
+      </div>
+
+      <article class="rounded-xl border-2 border-brand-accent bg-brand-surface p-5 text-center">
+        <h3 class="mb-2 text-xl font-bold text-brand-text">Pinchtab</h3>
+        <div class="mb-3 space-y-1 text-xs font-medium leading-5 text-brand-accent">
+          <p>✓ stealth mode</p>
+          <p>✓ persistent sessions</p>
+          <p>✓ accessibility tree</p>
+          <p>✓ token efficient</p>
+        </div>
+        <p class="font-mono text-[0.72rem] uppercase tracking-[0.08em] text-brand-text-dim">12MB Go binary · zero config</p>
+      </article>
+
+      <div class="flex items-center justify-center text-brand-accent lg:block">
+        <div class="hidden h-0.5 w-14 bg-brand-accent lg:block"></div>
+        <span class="text-lg lg:hidden">↓</span>
+      </div>
+
+      <article class="rounded-xl border-2 border-brand-accent bg-brand-surface p-5 text-center">
+        <h3 class="mb-2 text-lg font-semibold text-brand-text">Chrome</h3>
+        <p class="text-xs leading-5 text-brand-text-muted">Your logged-in sessions and tabs</p>
+        <p class="mt-2 font-mono text-[0.72rem] uppercase tracking-[0.08em] text-brand-text-dim">Persistent profile</p>
+      </article>
+    </div>
+  </div>
+</section>

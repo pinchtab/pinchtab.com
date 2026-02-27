@@ -1,70 +1,68 @@
 ---
-import Card from '@/components/ui/Card.astro';
-import { cn } from '@/lib/utils';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
 
 const features = [
   {
+    icon: '🌲',
+    title: 'Accessibility Tree',
+    description: 'Structured tree with stable refs (e0, e1...) for click, type, and read. Deterministic with no coordinate guessing.',
+  },
+  {
+    icon: '🎯',
+    title: 'Smart Filters',
+    description: '?filter=interactive returns only buttons, links, and inputs. Fewer tokens per snapshot.',
+  },
+  {
+    icon: '🕵️',
+    title: 'Stealth Mode',
+    description: 'Patches navigator.webdriver, spoofs UA, and hides automation flags to pass major bot checks.',
+  },
+  {
+    icon: '💾',
+    title: 'Persistent Sessions',
+    description: 'Cookies, auth, and tabs survive restarts. Log in once and keep the session alive.',
+  },
+  {
+    icon: '📝',
+    title: 'Text Extraction',
+    description: 'Readability mode strips nav and ads. Raw mode keeps full text for parser workflows.',
+  },
+  {
+    icon: '🖱️',
+    title: 'Direct Actions',
+    description: 'Click, type, fill, press, focus, hover, select, and scroll by ref or selector.',
+  },
+  {
     icon: '⚡',
-    title: 'Lightning fast',
-    description: 'Sub-millisecond command latency so your agents never wait on the browser.',
+    title: 'JS Evaluation',
+    description: 'Escape hatch for any workflow gap. Execute JavaScript in any tab on demand.',
   },
   {
-    icon: '🔒',
-    title: 'Sandboxed & secure',
-    description: 'Every session runs in an isolated context — no state leaks between tasks.',
-  },
-  {
-    icon: '🤖',
-    title: 'Agent-first API',
-    description: 'Designed from the ground up for LLM tool-calling, not human interaction.',
-  },
-  {
-    icon: '🌐',
-    title: 'Any browser',
-    description: 'Chrome, Firefox, WebKit — control all of them through a single interface.',
+    icon: '📸',
+    title: 'Screenshots',
+    description: 'JPEG output with quality control for visual verification and downstream auditing.',
   },
 ];
 ---
 
-<section class={cn(
-  'py-20 sm:py-24 lg:py-28'
-)}>
-  <div class="container-custom">
-    <!-- Section header -->
-    <div class="mb-16 sm:mb-20">
-      <p class={cn(
-        'section-label mb-4 flex items-center gap-2',
-        'text-xs font-bold uppercase tracking-widest',
-        'text-brand-accent'
-      )}>
-        <span>&gt;</span>
-        <span>Core Capabilities</span>
-      </p>
-      <h2 class={cn(
-        'font-bold tracking-tight',
-        'text-4xl sm:text-5xl lg:text-6xl mb-4'
-      )}>
-        Built for the AI era
-      </h2>
-    </div>
+<section id="features">
+  <SectionHeading
+    label="What It Does"
+    title="Everything your agent needs"
+    description="Accessibility-first. Token-efficient. Framework-agnostic."
+  />
 
-    <!-- Feature grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {
-        features.map((feature) => (
-          <Card variant="hover" padding="lg">
-            <div class="text-4xl mb-4 leading-none block" aria-hidden="true">
-              {feature.icon}
-            </div>
-            <h3 class="font-semibold text-lg mb-3 text-brand-text">
-              {feature.title}
-            </h3>
-            <p class="text-sm text-brand-text-muted leading-relaxed">
-              {feature.description}
-            </p>
-          </Card>
-        ))
-      }
-    </div>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      features.map((feature) => (
+        <article class="rounded-2xl border border-brand-border-subtle bg-brand-surface p-6 transition-colors duration-200 hover:border-brand-border hover:bg-brand-surface-hover">
+          <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-accent/8 text-2xl leading-none" aria-hidden="true">
+            {feature.icon}
+          </div>
+          <h3 class="mb-2 text-base font-semibold text-brand-text">{feature.title}</h3>
+          <p class="text-sm leading-6 text-brand-text-muted">{feature.description}</p>
+        </article>
+      ))
+    }
   </div>
 </section>

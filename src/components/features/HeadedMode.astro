@@ -1,0 +1,63 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+
+const useCases = [
+  {
+    title: 'Export Hacker News as PDF',
+    description: 'Agent navigates to HN and extracts stories while you watch, verify, and export.',
+    lines: [
+      '# Agent extracts',
+      'curl localhost:9867/text',
+      '# You verify in browser, then',
+      'curl localhost:9867/pdf --output news.pdf',
+    ],
+  },
+  {
+    title: 'Verify before submit',
+    description: 'Agent fills form fields while you monitor each step in a visible browser window.',
+    lines: [
+      '# Agent fills: name, email, address',
+      '# You verify each in headed browser',
+      'curl -X POST .../action -d \'{"kind":"click","ref":"submit"}\'',
+    ],
+  },
+  {
+    title: 'Sync contacts to CRM',
+    description: 'Agent extracts lead data while you verify records before final save.',
+    lines: [
+      '# Agent extracts: name, email, company',
+      'curl localhost:9867/text',
+      '# You verify in CRM',
+      'curl -X POST .../action -d \'{"kind":"click","ref":"save"}\'',
+    ],
+  },
+];
+---
+
+<section>
+  <SectionHeading
+    label="Headed Mode"
+    title="Win real scenarios"
+    description="Run with BRIDGE_HEADLESS=false to watch the browser while the agent works."
+  />
+
+  <div class="grid gap-4 md:grid-cols-3">
+    {
+      useCases.map((useCase) => (
+        <article class="rounded-xl border border-brand-border-subtle bg-brand-surface p-5 transition-colors duration-200 hover:border-brand-border hover:bg-brand-surface-hover">
+          <h3 class="mb-2 text-lg font-semibold text-brand-text">{useCase.title}</h3>
+          <p class="mb-4 text-sm leading-6 text-brand-text-muted">{useCase.description}</p>
+          <div class="rounded-lg border border-brand-border-subtle bg-brand-surface-code p-3 font-mono text-xs leading-6">
+            {
+              useCase.lines.map((line) => (
+                <p class={line.startsWith('#') ? 'text-brand-text-dim' : 'text-brand-accent'}>
+                  {line}
+                </p>
+              ))
+            }
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>
