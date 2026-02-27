@@ -13,6 +13,29 @@ const {
   description = 'PinchTab gives AI agents precise, reliable control over browsers. Automate the web at a new level.',
   class: pageClass,
 } = Astro.props;
+
+const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : Astro.url.origin;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin).toString();
+const ogImageUrl = '/og-image.svg';
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Pinchtab',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'macOS, Linux, Windows',
+  description: 'Browser control for AI agents. 12MB Go binary, zero config, accessibility-first HTTP API.',
+  url: siteUrl,
+  downloadUrl: 'https://github.com/pinchtab/pinchtab/releases/latest',
+  softwareVersion: 'latest',
+  license: 'https://opensource.org/licenses/MIT',
+  programmingLanguage: 'Go',
+  author: {
+    '@type': 'Person',
+    name: 'Luigi Agosti',
+    url: 'https://github.com/luigi-agosti',
+  },
+};
 ---
 
 <!doctype html>
@@ -21,27 +44,85 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Luigi Agosti" />
+    <meta
+      name="keywords"
+      content="browser automation, AI agents, Go binary, accessibility tree, HTTP API, web scraping, Chrome DevTools, stealth mode, OpenClaw, chromedp"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:site_name" content="Pinchtab" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content="https://pinchtab.com" />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://pinchtab.com/og-image.svg" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#fbbf24" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
     <script is:inline>
       (() => {
-        let mode = 'human';
+        const normalizeMode = (mode) => (mode === 'agent' || mode === 'agents' ? 'agent' : 'human');
+        const readStoredMode = () => {
+          try {
+            return normalizeMode(localStorage.getItem('pinchtab-mode'));
+          } catch {
+            return 'human';
+          }
+        };
 
-        try {
-          const stored = localStorage.getItem('pinchtab-mode');
-          mode = stored === 'agent' || stored === 'agents' ? 'agent' : 'human';
-        } catch {
-          mode = 'human';
-        }
+        const applyModeText = (mode) => {
+          const normalizedMode = normalizeMode(mode);
+          const textNodes = document.querySelectorAll('[data-mode-text-human][data-mode-text-agent]');
+          textNodes.forEach((node) => {
+            const nextText = normalizedMode === 'agent'
+              ? node.getAttribute('data-mode-text-agent')
+              : node.getAttribute('data-mode-text-human');
 
-        document.documentElement.setAttribute('data-site-mode', mode);
+            if (typeof nextText === 'string') {
+              node.textContent = nextText;
+            }
+          });
+        };
+
+        const applyModeOrder = (mode) => {
+          const normalizedMode = normalizeMode(mode);
+          const orderedNodes = document.querySelectorAll('[data-mode-order-human][data-mode-order-agent]');
+          orderedNodes.forEach((node) => {
+            const nextOrder = normalizedMode === 'agent'
+              ? node.getAttribute('data-mode-order-agent')
+              : node.getAttribute('data-mode-order-human');
+
+            if (typeof nextOrder === 'string') {
+              node.style.order = nextOrder;
+            }
+          });
+        };
+
+        const applyMode = (mode) => {
+          const normalizedMode = normalizeMode(mode);
+          document.documentElement.setAttribute('data-site-mode', normalizedMode);
+          applyModeText(normalizedMode);
+          applyModeOrder(normalizedMode);
+        };
+
+        applyMode(readStoredMode());
+
+        document.addEventListener('modechange', (event) => {
+          applyMode(event.detail.mode);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+          applyMode(readStoredMode());
+        });
       })();
     </script>
     <title>{title}</title>
@@ -51,5 +132,6 @@ const {
       <slot />
     </main>
     <Footer />
+    <script is:inline src="/rum.js"></script>
   </body>
 </html>

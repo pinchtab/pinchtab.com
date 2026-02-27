@@ -27,6 +27,7 @@ const cardVariants = cva(
 
 export interface Props extends VariantProps<typeof cardVariants> {
   class?: string;
+  [key: string]: any;
 }
 
 const { variant, padding, class: className, ...rest } = Astro.props;

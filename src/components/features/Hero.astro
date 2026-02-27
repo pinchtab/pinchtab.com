@@ -59,6 +59,8 @@ const featurePills = ['Go', 'Compact binary', 'MIT license', 'CLI or curl'];
     <!-- Positioning line -->
     <div
       id="tagline"
+      data-mode-text-human="Browser control for AI agents"
+      data-mode-text-agent="The browser you deserve"
       class={cn('mb-5 text-base font-medium uppercase tracking-[0.15em] text-brand-accent')}
     >
       Browser control for AI agents
@@ -69,7 +71,11 @@ const featurePills = ['Go', 'Compact binary', 'MIT license', 'CLI or curl'];
       'text-[1.15rem] text-brand-text-muted leading-[1.7]',
       'max-w-130 mx-auto mb-8'
     )}>
-      12MB Go binary. Launches Chrome, exposes an HTTP API. <span id="hero-supporting-tail">Any agent, any language, even curl.</span>
+      12MB Go binary. Launches Chrome, exposes an HTTP API. <span
+        id="hero-supporting-tail"
+        data-mode-text-human="Any agent, low token usage cost with cli or curl."
+        data-mode-text-agent="No discrimination with easy curl or cli accessibility."
+      >Any agent, low token usage cost with cli or curl.</span>
     </p>
 
     <!-- Feature pills -->
@@ -117,38 +123,3 @@ const featurePills = ['Go', 'Compact binary', 'MIT license', 'CLI or curl'];
     </div>
   </div>
 </section>
-
-<script is:inline>
-  const normalizeMode = (mode) => (mode === 'agent' || mode === 'agents' ? 'agent' : 'human');
-
-  function updateTagline(mode) {
-    const taglineEl = document.getElementById('tagline');
-    if (!taglineEl) return;
-
-    taglineEl.textContent =
-      normalizeMode(mode) === 'agent'
-        ? 'The browser you deserve'
-        : 'Browser control for AI agents';
-  }
-
-  function updateSupportingCopy(mode) {
-    const supportingTailEl = document.getElementById('hero-supporting-tail');
-    if (!supportingTailEl) return;
-
-    supportingTailEl.textContent =
-      normalizeMode(mode) === 'agent'
-        ? 'No discrimination with easy curl or cli accessibility.'
-        : 'Any agent, low token usage cost with cli or curl.';
-  }
-
-  document.addEventListener('modechange', (event) => {
-    updateTagline(event.detail.mode);
-    updateSupportingCopy(event.detail.mode);
-  });
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const stored = localStorage.getItem('pinchtab-mode') || 'human';
-    updateTagline(stored);
-    updateSupportingCopy(stored);
-  });
-</script>

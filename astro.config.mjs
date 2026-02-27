@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
-import path from 'path';
 
 export default defineConfig({
   integrations: [react()],
@@ -24,13 +23,8 @@ export default defineConfig({
     plugins: [tailwindcss()],
     resolve: {
       alias: {
-        '@': path.resolve('./src'),
+        '@': new URL('./src', import.meta.url).pathname,
       },
     },
-  },
-
-  // TypeScript strict
-  typescript: {
-    typeCheck: 'strict',
   },
 });

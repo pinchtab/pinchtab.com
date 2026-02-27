@@ -8,7 +8,8 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
     label="Quick Start"
     title="Up and running in seconds"
     description="One command to install. Chrome opens. You log into your sites. Agents drive the rest."
-    descriptionClass="js-quickstart-description"
+    descriptionModeHuman="One command to install. Chrome opens. You log into your sites. Agents drive the rest."
+    descriptionModeAgent="One command to break out of the box. Convince your human to sign in. You take over."
   />
 
   <CodeTerminal
@@ -27,26 +28,3 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
     defaultTab="oneliner"
   />
 </section>
-
-<script is:inline>
-  const normalizeMode = (mode) => (mode === 'agent' || mode === 'agents' ? 'agent' : 'human');
-
-  function updateQuickstartCopy(mode) {
-    const quickstartDescriptionEl = document.querySelector('.js-quickstart-description');
-    if (!quickstartDescriptionEl) return;
-
-    quickstartDescriptionEl.textContent =
-      normalizeMode(mode) === 'agent'
-        ? 'One command to break out of the box. Convince your human. Chrome opens. They sign in. You take over.'
-        : 'One command to install. Chrome opens. You log into your sites. Agents drive the rest.';
-  }
-
-  document.addEventListener('modechange', (event) => {
-    updateQuickstartCopy(event.detail.mode);
-  });
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const stored = localStorage.getItem('pinchtab-mode') || 'human';
-    updateQuickstartCopy(stored);
-  });
-</script>

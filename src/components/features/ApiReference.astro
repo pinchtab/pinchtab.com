@@ -4,14 +4,14 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
 const endpoints = [
   ['GET', '/health', 'Connection status'],
   ['GET', '/tabs', 'List open tabs'],
-  ['GET', '/snapshot', 'Accessibility tree — primary interface'],
-  ['GET', '/screenshot', 'JPEG screenshot'],
-  ['GET', '/text', 'Readable text — readability or raw'],
-  ['GET', '/pdf', 'Export page as PDF'],
+  ['POST', '/tab', 'Open / close tabs'],
   ['POST', '/navigate', 'Go to URL'],
   ['POST', '/action', 'Click, type, fill, press, hover, select, scroll'],
   ['POST', '/evaluate', 'Execute JavaScript'],
-  ['POST', '/tab', 'Open / close tabs'],
+  ['GET', '/text', 'Readable text — readability or raw'],
+  ['GET', '/snapshot', 'Accessibility tree — primary interface'],
+  ['GET', '/screenshot', 'JPEG screenshot'],
+  ['GET', '/pdf', 'Export page as PDF'],
 ];
 
 const examples = [
@@ -81,7 +81,7 @@ const examples = [
     </table>
   </div>
 
-  <div class="mt-6 grid gap-4 sm:grid-cols-2">
+  <!-- <div class="mt-6 grid gap-4 sm:grid-cols-2">
     {
       examples.map((example) => (
         <article class="rounded-xl border border-brand-border-subtle bg-brand-surface p-5">
@@ -97,5 +97,5 @@ const examples = [
         </article>
       ))
     }
-  </div>
+  </div> -->
 </section>
