@@ -74,7 +74,15 @@ const {
             data-method={tab.method}
           >{lines.map((line) => {
             const isComment = line.trim().startsWith('#');
-            return <span class={cn('block', isComment ? 'text-brand-text-dim' : 'text-brand-accent')}>{line}</span>;
+            return (
+              <span
+                class={cn('block', isComment ? 'text-brand-text-dim' : 'text-brand-accent')}
+                data-code-line
+                data-is-comment={isComment ? 'true' : 'false'}
+              >
+                {line}
+              </span>
+            );
           })}</pre>
         );
       })
@@ -134,15 +142,15 @@ const {
           const activeSection = root.querySelector('.code-terminal-section:not(.hidden)');
           if (!activeSection) return;
 
-          const command = (activeSection.textContent || '')
-            .split('\n')
-            .filter((line) => !line.trim().startsWith('#'))
+          const command = Array.from(activeSection.querySelectorAll('[data-code-line]'))
+            .filter((line) => line.getAttribute('data-is-comment') !== 'true')
+            .map((line) => line.textContent || '')
             .join('\n')
             .trim();
 
           if (!command) return;
 
-          navigator.clipboard.writeText(command).then(() => {
+          const showCopied = () => {
             copyButton.textContent = 'OK';
             copyButton.classList.remove('bg-brand-accent', 'hover:bg-brand-accent-light');
             copyButton.classList.add('bg-brand-green', 'border-brand-green');
@@ -152,7 +160,24 @@ const {
               copyButton.classList.remove('bg-brand-green', 'border-brand-green');
               copyButton.classList.add('bg-brand-accent', 'hover:bg-brand-accent-light');
             }, 1400);
-          });
+          };
+
+          const fallbackCopy = (value) => {
+            const textarea = document.createElement('textarea');
+            textarea.value = value;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            const copied = document.execCommand('copy');
+            document.body.removeChild(textarea);
+            if (copied) showCopied();
+          };
+
+          navigator.clipboard.writeText(command)
+            .then(showCopied)
+            .catch(() => fallbackCopy(command));
         });
       }
     });
