@@ -74,15 +74,7 @@ const {
             data-method={tab.method}
           >{lines.map((line) => {
             const isComment = line.trim().startsWith('#');
-            return (
-              <span
-                class={cn('block', isComment ? 'text-brand-text-dim' : 'text-brand-accent')}
-                data-code-line
-                data-is-comment={isComment ? 'true' : 'false'}
-              >
-                {line}
-              </span>
-            );
+            return <span class={cn('block', isComment ? 'text-brand-text-dim' : 'text-brand-accent')} data-code-line data-is-comment={isComment ? 'true' : 'false'}>{line}</span>;
           })}</pre>
         );
       })
