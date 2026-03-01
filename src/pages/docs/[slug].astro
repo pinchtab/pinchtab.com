@@ -26,6 +26,6 @@ const pageTitle = `${currentPage.title} | ${docsData.name} Docs`;
 const pageDescription = `Documentation page for ${currentPage.title}.`;
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
+<BaseLayout title={pageTitle} description={pageDescription} ogImage="/docs.png" ogType="article">
   <DocsShell docsData={docsData} currentPage={currentPage} />
 </BaseLayout>
