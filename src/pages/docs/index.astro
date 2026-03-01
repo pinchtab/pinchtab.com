@@ -1,0 +1,24 @@
+---
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import DocsShell from '@/components/features/DocsShell.astro';
+import { getDocsData } from '@/lib/docs';
+
+const docsData = await getDocsData();
+const defaultSlug = docsData.firstSlug;
+
+if (!defaultSlug) {
+  throw new Error('index.json must include at least one documentation file');
+}
+
+const currentPage = docsData.pages.find((page) => page.slug === defaultSlug);
+if (!currentPage) {
+  throw new Error(`Default page slug "${defaultSlug}" is missing from loaded docs pages`);
+}
+
+const pageTitle = `${currentPage.title} | ${docsData.name} Docs`;
+const pageDescription = `Documentation page for ${currentPage.title}.`;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <DocsShell docsData={docsData} currentPage={currentPage} />
+</BaseLayout>

@@ -1,0 +1,170 @@
+---
+import MascotCrossfade from '@/components/ui/MascotCrossfade.astro';
+import { cn } from '@/lib/utils';
+import type { DocsData, DocsPage } from '@/lib/docs';
+
+export interface Props {
+  docsData: DocsData;
+  currentPage: DocsPage;
+}
+
+const { docsData, currentPage } = Astro.props;
+const defaultSlug = docsData.firstSlug;
+const toDocHref = (slug: string): string => {
+  if (defaultSlug && slug === defaultSlug) {
+    return '/docs';
+  }
+  return `/docs/${slug}`;
+};
+
+const tocHeadings = currentPage.headings.filter((heading) => heading.depth === 2);
+---
+
+<div class="w-full px-5 py-8 sm:px-8 lg:px-12">
+  <div class="mx-auto w-full max-w-[1720px]">
+    <div class="grid gap-8 xl:grid-cols-[240px_minmax(0,1fr)_220px]">
+    <aside class="xl:sticky xl:top-6 self-start">
+      <div class="space-y-5 rounded-md border border-brand-border-subtle/12 p-3">
+        <header class="px-2 pt-1">
+          <a href="/" class="inline-flex rounded-sm p-1 transition hover:bg-white/5" aria-label="Back to home">
+            <MascotCrossfade
+              humanImage="/mascot.png"
+              agentImage="/mascot-agent.png"
+              alt="PinchTab home"
+              animationVariant="pop"
+              className="h-9 w-9 object-contain"
+              agentSizeMultiplier={1.45}
+            />
+          </a>
+        </header>
+
+        <nav aria-label="Documentation navigation" class="space-y-4">
+          {docsData.sections.map((section) => (
+            <div class="space-y-1.5">
+              <p class="px-2 flex items-center gap-2 text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-brand-accent">
+                <span class="text-base leading-none">&gt;</span>
+                <span>{section.label}</span>
+              </p>
+              <ul class="space-y-1">
+                {section.items.map((item) => (
+                  <li>
+                    <a
+                      href={toDocHref(item.slug)}
+                      aria-current={item.slug === currentPage.slug ? 'page' : undefined}
+                      class={cn(
+                        'block rounded-sm border border-transparent px-2 py-1.5 text-sm transition',
+                        item.slug === currentPage.slug
+                          ? 'bg-brand-accent-glow-bright border border-brand-border text-brand-accent-light font-semibold'
+                          : 'text-brand-text-muted hover:bg-white/5 hover:text-brand-accent-light'
+                      )}
+                    >
+                      {item.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </div>
+    </aside>
+
+    <article class="min-w-0">
+      <div class="rounded-md border border-brand-border-subtle/12 p-6 sm:p-8">
+        <div
+          class="space-y-5 text-brand-text-muted [&_a]:text-brand-accent [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-brand-accent-light [&_blockquote]:border-l-2 [&_blockquote]:border-brand-border-subtle/20 [&_blockquote]:pl-4 [&_blockquote]:text-brand-text-muted [&_code]:rounded [&_h1]:mt-4 [&_h1]:text-2xl [&_h1]:text-brand-accent [&_h2]:mt-[56px] [&_h2]:scroll-mt-24 [&_h2]:text-lg [&_h2]:text-brand-text [&_h3]:mt-5 [&_h3]:scroll-mt-24 [&_h3]:text-lg [&_h3]:text-brand-text [&_hr]:hidden [&_li]:ml-5 [&_li]:list-disc [&_ol>li]:list-decimal [&_p]:text-[0.95rem] [&_pre:not(.code-terminal-section)]:my-5 [&_pre:not(.code-terminal-section)]:rounded-md [&_pre:not(.code-terminal-section)]:border [&_pre:not(.code-terminal-section)]:border-brand-border-subtle/15 [&_pre:not(.code-terminal-section)]:bg-brand-surface-code [&_ul]:space-y-2"
+        >
+          <Fragment set:html={currentPage.html} />
+        </div>
+      </div>
+    </article>
+
+    <aside class="hidden xl:block xl:sticky xl:top-6 self-start" data-docs-toc>
+      <div class="rounded-md border border-brand-border-subtle/12 p-3">
+        <p class="px-2 pt-1 flex items-center gap-2 text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-brand-accent">
+          <span class="text-base leading-none">&gt;</span>
+          <span>On This Page</span>
+        </p>
+        {
+          tocHeadings.length > 0 ? (
+            <ul class="mt-2 space-y-1">
+              {tocHeadings.map((heading) => (
+                <li>
+                  <a
+                    href={`#${heading.slug}`}
+                    class="block rounded-sm px-2 py-1.5 text-sm text-brand-text-muted transition hover:bg-white/5 hover:text-brand-accent-light"
+                    data-docs-toc-link={heading.slug}
+                  >
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="mt-3 px-2 text-[0.82rem] text-brand-text-dim">No indexed headings.</p>
+          )
+        }
+      </div>
+    </aside>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const tocRoots = Array.from(document.querySelectorAll('[data-docs-toc]'));
+    if (!tocRoots.length) return;
+
+    const ACTIVE_CLASSES = ['text-brand-accent', 'font-semibold', 'bg-brand-accent-glow'];
+    const INACTIVE_CLASSES = ['text-brand-text-muted'];
+
+    tocRoots.forEach((root) => {
+      const links = Array.from(root.querySelectorAll('[data-docs-toc-link]'));
+      if (!links.length) return;
+
+      const entries = links
+        .map((link) => {
+          const id = link.getAttribute('data-docs-toc-link') || '';
+          const heading = id ? document.getElementById(id) : null;
+          return { link, id, heading };
+        })
+        .filter((entry) => entry.heading);
+
+      if (!entries.length) return;
+
+      const setActive = (activeId) => {
+        links.forEach((link) => {
+          const isActive = link.getAttribute('data-docs-toc-link') === activeId;
+          ACTIVE_CLASSES.forEach((className) => link.classList.toggle(className, isActive));
+          INACTIVE_CLASSES.forEach((className) => link.classList.toggle(className, !isActive));
+        });
+      };
+
+      const pickActiveHeading = () => {
+        const marker = 150;
+        let activeId = entries[0].id;
+
+        entries.forEach((entry) => {
+          const top = entry.heading.getBoundingClientRect().top;
+          if (top - marker <= 0) {
+            activeId = entry.id;
+          }
+        });
+
+        setActive(activeId);
+      };
+
+      links.forEach((link) => {
+        link.addEventListener('click', () => {
+          const id = link.getAttribute('data-docs-toc-link');
+          if (id) setActive(id);
+        });
+      });
+
+      window.addEventListener('scroll', pickActiveHeading, { passive: true });
+      window.addEventListener('resize', pickActiveHeading);
+      window.addEventListener('hashchange', pickActiveHeading);
+      pickActiveHeading();
+    });
+  })();
+</script>

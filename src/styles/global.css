@@ -155,6 +155,29 @@ pre:not(.code-terminal-section) {
   line-height: 1.8;
 }
 
+.code-terminal-section {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--brand-surface-hover-rgb)) rgb(var(--brand-bg-rgb) / 0.45);
+}
+
+.code-terminal-section::-webkit-scrollbar {
+  height: 6px;
+}
+
+.code-terminal-section::-webkit-scrollbar-track {
+  background: rgb(var(--brand-bg-rgb) / 0.45);
+  border-radius: 9999px;
+}
+
+.code-terminal-section::-webkit-scrollbar-thumb {
+  background: rgb(var(--brand-surface-hover-rgb));
+  border-radius: 9999px;
+}
+
+.code-terminal-section::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--brand-text-dim-rgb) / 0.9);
+}
+
 /* ===========================
    Section defaults
    =========================== */

@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import DocsShell from '@/components/features/DocsShell.astro';
+import { getDocsData, type DocsData, type DocsPage } from '@/lib/docs';
+
+interface Props {
+  docsData: DocsData;
+  currentPage: DocsPage;
+}
+
+export async function getStaticPaths() {
+  const docsData = await getDocsData();
+  return docsData.pages
+    .filter((page) => page.slug !== docsData.firstSlug)
+    .map((page) => ({
+      params: { slug: page.slug },
+      props: {
+        docsData,
+        currentPage: page,
+      },
+    }));
+}
+
+const { docsData, currentPage } = Astro.props as Props;
+const pageTitle = `${currentPage.title} | ${docsData.name} Docs`;
+const pageDescription = `Documentation page for ${currentPage.title}.`;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <DocsShell docsData={docsData} currentPage={currentPage} />
+</BaseLayout>
