@@ -30,7 +30,7 @@ interface GitHubContributor {
 }
 
 const EXCLUDED_CONTRIBUTORS = new Set(['luigiagent', 'luigi-agosti']);
-const CONTRIBUTORS_URL = 'https://api.github.com/repos/pinchtab/pinchtab/contributors?per_page=12';
+const CONTRIBUTORS_URL = 'https://api.github.com/repos/pinchtab/pinchtab/contributors?per_page=20';
 const CONTRIBUTORS_GRAPH_URL = 'https://github.com/pinchtab/pinchtab/graphs/contributors';
 
 const contributors: Member[] = [];
@@ -44,7 +44,7 @@ try {
     contributors.push(
       ...data
         .filter((contributor) => !EXCLUDED_CONTRIBUTORS.has(contributor.login.toLowerCase()))
-        .slice(0, 10)
+        .slice(0, 12)
         .map((contributor) => ({
           name: contributor.login,
           tagline: `${contributor.contributions} contributions`,

@@ -3,11 +3,9 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
 
 const endpoints = [
   ['GET', '/health', 'Connection status'],
-  ['GET', '/tabs', 'List open tabs'],
-  ['POST', '/tab', 'Open / close tabs'],
   ['POST', '/navigate', 'Go to URL'],
   ['POST', '/action', 'Click, type, fill, press, hover, select, scroll'],
-  ['POST', '/evaluate', 'Execute JavaScript'],
+  ['GET', '/find', 'Find elements by text or selector hints'],
   ['GET', '/text', 'Readable text — readability or raw'],
   ['GET', '/snapshot', 'Accessibility tree — primary interface'],
   ['GET', '/screenshot', 'JPEG screenshot'],

@@ -1,23 +1,6 @@
 ---
+import CodeTerminal from '@/components/ui/CodeTerminal.astro';
 import SectionHeading from '@/components/ui/SectionHeading.astro';
-import MermaidDiagram from '@/components/ui/MermaidDiagram.astro';
-
-const architectureChart = `flowchart TD
-    U["User / Agent / Tool"] --> S["Pinchtab Server"]
-
-    S --> D["Dashboard / Profiles / Instance API"]
-    S --> R["Routing / Orchestrator"]
-    S --> X["Shorthand Browser API"]
-
-    R --> M1["Managed Instance"]
-    R --> A1["Attached Instance"]
-
-    M1 --> B["pinchtab bridge"]
-    B --> C1["Chrome"]
-    C1 --> T1["Tabs"]
-
-    A1 --> C2["External Chrome"]
-    C2 --> T2["Tabs"]`;
 ---
 
 <section>
@@ -27,5 +10,15 @@ const architectureChart = `flowchart TD
     description="One binary. One Chrome. HTTP in, CDP out."
   />
 
-  <MermaidDiagram chart={architectureChart} title="Pinchtab runtime topology" />
+  <CodeTerminal
+    tabs={[
+      {
+        label: 'CLI',
+        method: 'cli',
+        code: '# Open GitHub in Pinchtab\npinchtab nav https://github.com/pinchtab/pinchtab',
+      },
+    ]}
+    defaultTab="cli"
+    terminalLabel="runtime"
+  />
 </section>

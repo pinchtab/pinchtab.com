@@ -6,8 +6,10 @@ const agentDescription = 'You have full control, but be mindful and use configur
 
 const checks = [
   'You are responsible for what agents do with your accounts.',
-  'Set BRIDGE_TOKEN so random clients cannot control your browser.',
-  'Treat ~/.pinchtab/ as sensitive because it stores active sessions.',
+  'Set PINCHTAB_TOKEN so unauthorized clients cannot control your browser.',
+  'Keep the default settings unless you have a specific reason to change them.',
+  "Treat Pinchtab's data and profile directories as sensitive because they store login sessions and other browser state.",
+  '~/.pinchtab/ is only the legacy fallback location.',
   'Start with low-risk accounts before touching production data.',
   'No data leaves your machine by default, but connected agents can still exfiltrate it.',
 ];
@@ -24,7 +26,7 @@ const checks = [
 
   <div class="rounded-2xl border border-brand-border bg-brand-accent/6 p-5 sm:p-7">
     <p class="mb-4 text-sm leading-7 text-brand-text-muted">
-      When you log into sites through Pinchtab's Chrome window, those sessions persist. Any agent with HTTP access can act as you.
+      When you log into sites through Pinchtab&apos;s Chrome window, those sessions persist. Any client that can reach Pinchtab and authenticate can act as you.
     </p>
     <ul class="space-y-2">
       {

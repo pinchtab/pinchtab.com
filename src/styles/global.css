@@ -186,6 +186,27 @@ pre:not(.code-terminal-section) {
   background: rgb(var(--brand-text-dim-rgb) / 0.9);
 }
 
+html[data-site-mode='human'] [data-mode-switch] [data-mode-thumb] {
+  transform: translateX(0);
+}
+
+html[data-site-mode='agent'] [data-mode-switch] [data-mode-thumb] {
+  transform: translateX(calc(100% + 4px));
+}
+
+html[data-site-mode='human'] [data-mode-switch] [data-mode-label='human'],
+html[data-site-mode='agent'] [data-mode-switch] [data-mode-label='agent'] {
+  color: rgb(var(--switch-label-active-rgb) / 1);
+}
+
+html[data-site-mode='human'] [data-mode-switch] [data-mode-label='agent'] {
+  color: rgb(var(--switch-label-agent-inactive-rgb) / 0.95);
+}
+
+html[data-site-mode='agent'] [data-mode-switch] [data-mode-label='human'] {
+  color: rgb(var(--switch-label-human-inactive-rgb) / 0.95);
+}
+
 /* ===========================
    Section defaults
    =========================== */

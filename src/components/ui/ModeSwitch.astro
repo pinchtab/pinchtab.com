@@ -54,8 +54,18 @@ const { class: className } = Astro.props;
       )}
       aria-hidden="true"
     >
-      <span class="text-center transition-all duration-300 text-[rgb(var(--switch-label-active-rgb)/1)]" data-mode-label-human>Humans</span>
-      <span class="text-center transition-all duration-300 text-[rgb(var(--switch-label-active-rgb)/1)]" data-mode-label-agent>Agents</span>
+      <span
+        class="text-center transition-all duration-300 text-[rgb(var(--switch-label-active-rgb)/1)]"
+        data-mode-label="human"
+      >
+        Humans
+      </span>
+      <span
+        class="text-center transition-all duration-300 text-[rgb(var(--switch-label-agent-inactive-rgb)/0.95)]"
+        data-mode-label="agent"
+      >
+        Agents
+      </span>
     </span>
   </button>
 </div>
@@ -90,26 +100,8 @@ const { class: className } = Astro.props;
 
     const applyState = (toggle, mode) => {
       const isAgent = mode === AGENT;
-
-      const thumb = toggle.querySelector('[data-mode-thumb]');
-      const humanLabel = toggle.querySelector('[data-mode-label-human]');
-      const agentLabel = toggle.querySelector('[data-mode-label-agent]');
-      if (!thumb || !humanLabel || !agentLabel) return;
-
       toggle.setAttribute('aria-checked', String(isAgent));
       toggle.dataset.mode = mode;
-
-      const travelX = Math.max(0, toggle.clientWidth - thumb.offsetWidth - 8);
-      thumb.style.transform = isAgent ? `translateX(${travelX}px)` : 'translateX(0px)';
-
-      humanLabel.style.color = isAgent
-        ? 'rgb(var(--switch-label-human-inactive-rgb) / 0.95)'
-        : 'rgb(var(--switch-label-active-rgb) / 1)';
-      agentLabel.style.color = isAgent
-        ? 'rgb(var(--switch-label-active-rgb) / 1)'
-        : 'rgb(var(--switch-label-agent-inactive-rgb) / 0.95)';
-      humanLabel.style.opacity = '1';
-      agentLabel.style.opacity = '1';
     };
 
     const applyAll = (mode, dispatch = false) => {
@@ -123,7 +115,9 @@ const { class: className } = Astro.props;
       }
     };
 
-    const initialMode = normalizeMode(readStoredMode());
+    const initialMode = normalizeMode(
+      document.documentElement.getAttribute(SITE_MODE_ATTR) || readStoredMode()
+    );
     applyAll(initialMode, false);
 
     toggles.forEach((toggle) => {
@@ -144,11 +138,6 @@ const { class: className } = Astro.props;
           applyAll(AGENT, true);
         }
       });
-    });
-
-    window.addEventListener('resize', () => {
-      const activeMode = normalizeMode(readStoredMode());
-      toggles.forEach((toggle) => applyState(toggle, activeMode));
     });
   })();
 </script>
