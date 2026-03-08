@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsxImportSource": "astro",
     "baseUrl": ".",
+    "types": ["node"],
     "paths": {
       "@/*": ["src/*"]
     }

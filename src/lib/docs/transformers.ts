@@ -14,10 +14,6 @@ function isMermaidLanguage(language: string | null): boolean {
   return language === 'mermaid';
 }
 
-function isJsonLanguage(language: string | null): boolean {
-  return Boolean(language && /^(json|jsonc|geojson)$/.test(language));
-}
-
 function renderDocsTerminalCode(rawCode: string): string {
   const normalizedCode = rawCode.replace(/\r\n/g, '\n').replace(/\s+$/, '');
   const lines = normalizedCode.split('\n');

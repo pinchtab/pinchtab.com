@@ -11,29 +11,6 @@ const endpoints = [
   ['GET', '/screenshot', 'JPEG screenshot'],
   ['GET', '/pdf', 'Export page as PDF'],
 ];
-
-const examples = [
-  {
-    title: 'Read a page',
-    curl: 'curl http://localhost:9867/text?format=readability',
-    cli: 'pinchtab text',
-  },
-  {
-    title: 'Snapshot',
-    curl: 'curl http://localhost:9867/snapshot?filter=interactive',
-    cli: 'pinchtab snap --filter interactive',
-  },
-  {
-    title: 'Click by ref',
-    curl: 'curl -X POST http://localhost:9867/action -H "Content-Type: application/json" -d \'{"kind":"click","ref":"e5"}\'',
-    cli: 'pinchtab action click e5',
-  },
-  {
-    title: 'Navigate',
-    curl: 'curl -X POST http://localhost:9867/navigate -H "Content-Type: application/json" -d \'{"url":"https://example.com"}\'',
-    cli: 'pinchtab nav https://example.com',
-  },
-];
 ---
 
 <section id="api">
