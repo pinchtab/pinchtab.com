@@ -12,6 +12,8 @@ export interface Props {
   defaultTab?: string;
   class?: string;
   terminalLabel?: string;
+  showTabs?: boolean;
+  syncWithSiteMode?: boolean;
 }
 
 const {
@@ -19,6 +21,8 @@ const {
   defaultTab = tabs[0]?.method || 'default',
   class: className,
   terminalLabel = 'terminal',
+  showTabs = true,
+  syncWithSiteMode = false,
 } = Astro.props;
 ---
 
@@ -28,6 +32,8 @@ const {
     className
   )}
   data-code-terminal
+  data-default-method={defaultTab}
+  data-sync-site-mode={syncWithSiteMode ? 'true' : 'false'}
 >
   <div class="flex h-12 items-center gap-4 border-b border-brand-border-subtle bg-[rgb(var(--brand-bg-rgb)/0.35)] px-5">
     <div class="flex gap-2">
@@ -36,24 +42,28 @@ const {
       <span class="h-2.5 w-2.5 rounded-full bg-brand-green" aria-hidden="true"></span>
     </div>
 
-    <div class="ml-1 flex flex-wrap gap-2">
-      {
-        tabs.map((tab) => (
-          <button
-            type="button"
-            class={cn(
-              'code-tab rounded-md border px-2.5 py-1 text-xs font-semibold transition-all duration-150',
-              tab.method === defaultTab
-                ? 'border-brand-accent bg-brand-accent text-[rgb(var(--brand-bg-rgb)/1)]'
-                : 'border-brand-border-subtle text-brand-text-muted hover:border-brand-border hover:text-brand-text'
-            )}
-            data-method={tab.method}
-          >
-            {tab.label}
-          </button>
-        ))
-      }
-    </div>
+    {
+      showTabs && (
+        <div class="ml-1 flex flex-wrap gap-2">
+          {
+            tabs.map((tab) => (
+              <button
+                type="button"
+                class={cn(
+                  'code-tab rounded-md border px-2.5 py-1 text-xs font-semibold transition-all duration-150',
+                  tab.method === defaultTab
+                    ? 'border-brand-accent bg-brand-accent text-[rgb(var(--brand-bg-rgb)/1)]'
+                    : 'border-brand-border-subtle text-brand-text-muted hover:border-brand-border hover:text-brand-text'
+                )}
+                data-method={tab.method}
+              >
+                {tab.label}
+              </button>
+            ))
+          }
+        </div>
+      )
+    }
 
     <span class="ml-auto text-xs uppercase tracking-[0.12em] text-brand-text-dim">
       {terminalLabel}
@@ -69,9 +79,10 @@ const {
             class={cn(
               'code-terminal-section overflow-x-auto whitespace-pre-wrap pb-10 font-mono text-[0.82rem] leading-[1.8] text-brand-text-muted',
               'm-0 border-0 bg-transparent p-0 text-left shadow-none',
-              tab.method !== defaultTab && 'hidden'
+              !syncWithSiteMode && tab.method !== defaultTab && 'hidden'
             )}
             data-method={tab.method}
+            data-mode-content={syncWithSiteMode && (tab.method === 'human' || tab.method === 'agent') ? tab.method : undefined}
           >{lines.map((line) => {
             const isComment = line.trim().startsWith('#');
             return <span class={cn('block', isComment ? 'text-brand-text-dim' : 'text-brand-accent')} data-code-line data-is-comment={isComment ? 'true' : 'false'}>{line}</span>;
@@ -93,6 +104,8 @@ const {
       CP
     </button>
   </div>
+
+  <slot name="footer" />
 </div>
 
 <script is:inline>
@@ -100,6 +113,7 @@ const {
     const roots = Array.from(document.querySelectorAll('[data-code-terminal]'));
     if (!roots.length) return;
 
+    const normalizeMode = (value) => value === 'agent' || value === 'agents' ? 'agent' : 'human';
     const activeTabClasses = ['border-brand-accent', 'bg-brand-accent', 'text-[rgb(var(--brand-bg-rgb)/1)]'];
     const inactiveTabClasses = ['border-brand-border-subtle', 'text-brand-text-muted'];
 
@@ -107,31 +121,62 @@ const {
       const tabs = Array.from(root.querySelectorAll('.code-tab'));
       const sections = Array.from(root.querySelectorAll('.code-terminal-section'));
       const copyButton = root.querySelector('[data-copy-btn]');
+      const syncWithSiteMode = root.getAttribute('data-sync-site-mode') === 'true';
+      const fallbackMethod = root.getAttribute('data-default-method') || sections[0]?.dataset.method || '';
+
+      const resolveMethod = (method) => {
+        if (sections.some((section) => section.dataset.method === method)) {
+          return method;
+        }
+        return fallbackMethod;
+      };
+
+      const getSiteModeMethod = (mode) => resolveMethod(normalizeMode(mode));
 
       const setActiveTab = (method) => {
+        const activeMethod = resolveMethod(method);
+        root.dataset.activeMethod = activeMethod;
+
         tabs.forEach((tab) => {
-          const isActive = tab.dataset.method === method;
+          const isActive = tab.dataset.method === activeMethod;
           tab.classList.toggle('hover:border-brand-border', !isActive);
           tab.classList.toggle('hover:text-brand-text', !isActive);
           activeTabClasses.forEach((className) => tab.classList.toggle(className, isActive));
           inactiveTabClasses.forEach((className) => tab.classList.toggle(className, !isActive));
         });
 
-        sections.forEach((section) => {
-          section.classList.toggle('hidden', section.dataset.method !== method);
-        });
+        if (!syncWithSiteMode) {
+          sections.forEach((section) => {
+            section.classList.toggle('hidden', section.dataset.method !== activeMethod);
+          });
+        }
       };
 
-      tabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-          if (!tab.dataset.method) return;
-          setActiveTab(tab.dataset.method);
+      setActiveTab(
+        syncWithSiteMode
+          ? getSiteModeMethod(document.documentElement.getAttribute('data-site-mode'))
+          : fallbackMethod
+      );
+
+      if (!syncWithSiteMode) {
+        tabs.forEach((tab) => {
+          tab.addEventListener('click', () => {
+            if (!tab.dataset.method) return;
+            setActiveTab(tab.dataset.method);
+          });
         });
-      });
+      } else {
+        document.addEventListener('modechange', (event) => {
+          setActiveTab(getSiteModeMethod(event.detail?.mode || document.documentElement.getAttribute('data-site-mode')));
+        });
+      }
 
       if (copyButton) {
         copyButton.addEventListener('click', () => {
-          const activeSection = root.querySelector('.code-terminal-section:not(.hidden)');
+          const activeMethod = root.dataset.activeMethod || fallbackMethod;
+          const activeSection = activeMethod
+            ? root.querySelector(`.code-terminal-section[data-method="${activeMethod}"]`)
+            : root.querySelector('.code-terminal-section:not(.hidden)');
           if (!activeSection) return;
 
           const command = Array.from(activeSection.querySelectorAll('[data-code-line]'))

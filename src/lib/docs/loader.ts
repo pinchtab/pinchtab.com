@@ -278,7 +278,7 @@ export async function fetchDocFromCandidates(
 
     for (const localPath of localCandidates) {
       if (fs.existsSync(localPath)) {
-        console.log(`[docs] found local file: ${localPath}`);
+        console.log(`[docs] loading "${safePath}" from local file: ${localPath}`);
         return {
           sourceUrl: `file://${localPath}`,
           content: fs.readFileSync(localPath, 'utf-8'),
@@ -294,6 +294,7 @@ export async function fetchDocFromCandidates(
   for (const candidate of candidates) {
     const response = await fetch(candidate);
     if (response.ok) {
+      console.log(`[docs] loading "${safePath}" from remote file: ${candidate}`);
       return {
         sourceUrl: candidate,
         content: await response.text(),
@@ -335,6 +336,7 @@ export async function fetchDocsConfig(): Promise<{ config: DocsConfig; branch: s
     }
   }
 
+  console.log(`[docs] loading manifest from branch "${DOCS_BRANCH}": ${DOCS_JSON_URL}`);
   const response = await fetch(DOCS_JSON_URL);
   if (!response.ok) {
     throw new Error(`Failed to fetch ${DOCS_JSON_URL} (${response.status} ${response.statusText})`);
@@ -405,6 +407,8 @@ export async function loadDocsFromRemote(): Promise<DocsData> {
   const markdownProcessor = await getMarkdownProcessor();
   const { config, branch, docsJsonUrl, docsBaseUrl } = await fetchDocsConfig();
   const repoBaseUrl = buildRepoBaseUrl(docsJsonUrl);
+
+  console.log(`[docs] resolved docs source: branch=${branch} manifest=${docsJsonUrl}`);
 
   const seenSlugs = new Set<string>();
   const sourcePathToPage = new Map<string, DocsPage>();

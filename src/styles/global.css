@@ -161,6 +161,26 @@ pre:not(.code-terminal-section) {
   padding: 1.5rem;
   font-size: 0.85rem;
   line-height: 1.8;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--brand-surface-hover-rgb)) rgb(var(--brand-bg-rgb) / 0.45);
+}
+
+pre:not(.code-terminal-section)::-webkit-scrollbar {
+  height: 6px;
+}
+
+pre:not(.code-terminal-section)::-webkit-scrollbar-track {
+  background: rgb(var(--brand-bg-rgb) / 0.45);
+  border-radius: 9999px;
+}
+
+pre:not(.code-terminal-section)::-webkit-scrollbar-thumb {
+  background: rgb(var(--brand-surface-hover-rgb));
+  border-radius: 9999px;
+}
+
+pre:not(.code-terminal-section)::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--brand-text-dim-rgb) / 0.9);
 }
 
 .code-terminal-section {
