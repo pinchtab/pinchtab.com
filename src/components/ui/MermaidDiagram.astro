@@ -1,0 +1,169 @@
+---
+import { cva } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
+
+const figureVariants = cva(
+  'overflow-hidden rounded-2xl border border-brand-border-subtle/30 bg-[linear-gradient(180deg,rgb(var(--brand-surface-rgb)/0.75),rgb(var(--brand-bg-rgb)/0.88))] shadow-[0_0_40px_rgb(var(--brand-accent-rgb)/0.08)]'
+);
+
+export interface Props {
+  chart: string;
+  title?: string;
+  badge?: string;
+  class?: string;
+}
+
+const {
+  chart,
+  title = 'Architecture Diagram',
+  badge = 'Mermaid',
+  class: className,
+} = Astro.props;
+---
+
+<figure class={cn(figureVariants(), className)} data-mermaid-figure>
+  <figcaption class="flex items-center justify-between border-b border-brand-border-subtle/20 px-5 py-3">
+    <span class="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-brand-text-dim">{title}</span>
+    <span class="text-[0.68rem] uppercase tracking-[0.12em] text-brand-text-dim">{badge}</span>
+  </figcaption>
+
+  <div class="px-4 py-4 sm:px-5 sm:py-5" data-mermaid-diagram>
+    <pre
+      class="code-terminal-section m-0 overflow-x-auto whitespace-pre rounded-xl border border-brand-border-subtle/10 bg-brand-surface-code px-4 py-4 font-mono text-[0.81rem] leading-[1.58] text-left text-brand-text shadow-none"
+      data-mermaid-source
+    ><code>{chart}</code></pre>
+    <div class="hidden overflow-x-auto rounded-xl border border-brand-border-subtle/10 bg-brand-surface-code px-2 py-2 sm:px-3" data-mermaid-output></div>
+    <p class="mt-3 hidden text-xs leading-5 text-red-300" data-mermaid-error></p>
+  </div>
+</figure>
+
+<script is:inline type="module">
+  const win = window;
+
+  const readCssColor = (variableName, fallback) => {
+    const value = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+    return value ? `rgb(${value.replace(/\s+/g, ' ')})` : fallback;
+  };
+
+  const getMermaidConfig = () => ({
+    startOnLoad: false,
+    securityLevel: 'strict',
+    theme: 'base',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    flowchart: {
+      htmlLabels: true,
+      useMaxWidth: true,
+      curve: 'basis',
+    },
+    themeVariables: {
+      background: 'transparent',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      primaryColor: readCssColor('--brand-surface-rgb', '#1a1d27'),
+      primaryBorderColor: readCssColor('--brand-accent-rgb', '#60a5fa'),
+      primaryTextColor: readCssColor('--brand-text-rgb', '#e2e8f0'),
+      secondaryColor: readCssColor('--brand-bg-rgb', '#0f1117'),
+      secondaryBorderColor: readCssColor('--brand-border-rgb', '#60a5fa'),
+      secondaryTextColor: readCssColor('--brand-text-rgb', '#e2e8f0'),
+      tertiaryColor: readCssColor('--brand-surface-code-rgb', '#141720'),
+      tertiaryBorderColor: readCssColor('--brand-border-rgb', '#60a5fa'),
+      tertiaryTextColor: readCssColor('--brand-text-rgb', '#e2e8f0'),
+      lineColor: readCssColor('--brand-accent-rgb', '#60a5fa'),
+      textColor: readCssColor('--brand-text-rgb', '#e2e8f0'),
+      nodeBorder: readCssColor('--brand-accent-rgb', '#60a5fa'),
+    },
+  });
+
+  const loadMermaid = async () => {
+    if (!win.__pinchtabMermaidModulePromise) {
+      win.__pinchtabMermaidModulePromise = import(
+        'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'
+      ).then((module) => module.default);
+    }
+    return win.__pinchtabMermaidModulePromise;
+  };
+
+  const renderMermaidDiagrams = async () => {
+    if (win.__pinchtabMermaidRendering) {
+      win.__pinchtabMermaidNeedsRerender = true;
+      return;
+    }
+
+    win.__pinchtabMermaidRendering = true;
+    const mermaid = await loadMermaid();
+    try {
+      mermaid.initialize(getMermaidConfig());
+
+      const diagrams = document.querySelectorAll('[data-mermaid-diagram]');
+
+      for (const [index, container] of diagrams.entries()) {
+        const source = container.querySelector('[data-mermaid-source]');
+        const output = container.querySelector('[data-mermaid-output]');
+        const errorMessage = container.querySelector('[data-mermaid-error]');
+        if (
+          !(source instanceof HTMLElement) ||
+          !(output instanceof HTMLElement) ||
+          !(errorMessage instanceof HTMLElement)
+        ) {
+          continue;
+        }
+
+        const chart = source.innerText.trim();
+        if (!chart) {
+          continue;
+        }
+
+        try {
+          const renderId = `pinchtab-mermaid-${index}-${Date.now()}`;
+          const { svg, bindFunctions } = await mermaid.render(renderId, chart);
+          output.innerHTML = svg;
+          output.classList.remove('hidden');
+          source.classList.add('hidden');
+          errorMessage.textContent = '';
+          errorMessage.classList.add('hidden');
+          bindFunctions?.(output);
+        } catch (error) {
+          output.innerHTML = '';
+          output.classList.add('hidden');
+          source.classList.remove('hidden');
+          errorMessage.textContent = error instanceof Error ? error.message : 'Mermaid failed to render this diagram.';
+          errorMessage.classList.remove('hidden');
+          console.error('[pinchtab] failed to render Mermaid diagram', error);
+        }
+      }
+    } finally {
+      win.__pinchtabMermaidRendering = false;
+      if (win.__pinchtabMermaidNeedsRerender) {
+        win.__pinchtabMermaidNeedsRerender = false;
+        win.__pinchtabScheduleMermaidRender?.();
+      }
+    }
+  };
+
+  const scheduleMermaidRender = () => {
+    if (win.__pinchtabMermaidFrame) {
+      cancelAnimationFrame(win.__pinchtabMermaidFrame);
+    }
+
+    win.__pinchtabMermaidFrame = requestAnimationFrame(() => {
+      win.__pinchtabMermaidFrame = 0;
+      void win.__pinchtabMermaidRender?.();
+    });
+  };
+
+  if (!win.__pinchtabMermaidRender) {
+    win.__pinchtabMermaidRender = renderMermaidDiagrams;
+  }
+
+  if (!win.__pinchtabScheduleMermaidRender) {
+    win.__pinchtabScheduleMermaidRender = scheduleMermaidRender;
+  }
+
+  if (!win.__pinchtabMermaidModeListenerBound) {
+    win.__pinchtabMermaidModeListenerBound = true;
+    window.addEventListener('modechange', () => {
+      win.__pinchtabScheduleMermaidRender?.();
+    });
+  }
+
+  win.__pinchtabScheduleMermaidRender();
+</script>

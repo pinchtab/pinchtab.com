@@ -1,0 +1,129 @@
+---
+import MascotCrossfade from '@/components/ui/MascotCrossfade.astro';
+import { cn } from '@/lib/utils';
+import type { DocsData, DocsPage } from '@/lib/docs';
+
+export interface Props {
+  docsData: DocsData;
+  currentPage: DocsPage;
+  class?: string;
+}
+
+const { docsData, currentPage, class: className } = Astro.props;
+const defaultSlug = docsData.firstSlug;
+
+const toDocHref = (slug: string): string => {
+  if (defaultSlug && slug === defaultSlug) {
+    return '/docs';
+  }
+  return `/docs/${slug}`;
+};
+---
+
+<aside class={cn("xl:sticky xl:top-6 self-start", className)}>
+  <div class="space-y-6 p-1">
+    <header class="px-2 pt-1">
+      <a href="/" class="inline-flex rounded-sm p-1 transition hover:bg-white/5" aria-label="Back to home">
+        <MascotCrossfade
+          humanImage="/mascot.png"
+          agentImage="/mascot-agent.png"
+          alt="PinchTab home"
+          animationVariant="pop"
+          className="h-9 w-9 object-contain"
+          agentSizeMultiplier={1.45}
+        />
+      </a>
+    </header>
+
+    <nav aria-label="Documentation navigation" class="space-y-5">
+      {docsData.sections.map((section) => {
+        const isSectionActive = section.items.some(item => item.slug === currentPage.slug);
+        return (
+          <div class="space-y-1.5 group/section" data-docs-section data-expanded={isSectionActive ? "true" : "false"}>
+            <button
+              class="w-full px-2 flex items-center justify-between group cursor-pointer text-left py-1"
+              data-docs-section-trigger
+              aria-expanded={isSectionActive ? "true" : "false"}
+            >
+              <div class="flex items-center justify-between w-full gap-2.5 text-[0.68rem] font-bold uppercase tracking-[0.2em] text-brand-text-dim transition-colors group-hover:text-brand-text">
+                <span>{section.label}</span>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  stroke-width="3" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round" 
+                  class="h-2.5 w-2.5 opacity-30 group-hover:opacity-100 transition-all duration-300 ease-in-out group-data-[expanded=true]/section:rotate-90"
+                >
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </button>
+            <div 
+              class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out data-[expanded=true]:grid-rows-[1fr]" 
+              data-docs-section-content
+              data-expanded={isSectionActive ? "true" : "false"}
+            >
+              <ul class="overflow-hidden space-y-0.5 ml-2 mt-1">
+                {section.items.map((item) => (
+                  <li>
+                    <a
+                      href={toDocHref(item.slug)}
+                      aria-current={item.slug === currentPage.slug ? 'page' : undefined}
+                      class={cn(
+                        'block rounded-md px-2 py-1.5 text-[0.88rem] transition-all duration-200 relative group/link',
+                        item.slug === currentPage.slug
+                          ? 'text-brand-accent font-semibold'
+                          : 'text-brand-text-muted hover:bg-white/5 hover:text-brand-text'
+                      )}
+                    >
+                      {item.slug === currentPage.slug && (
+                        <span class="absolute left-[-4px] top-1/2 -translate-y-1/2 w-[2px] h-3.5 bg-brand-accent rounded-full shadow-[0_0_8px_rgba(var(--brand-accent-rgb)/0.4)]" />
+                      )}
+                      <span>{item.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        );
+      })}
+    </nav>
+  </div>
+</aside>
+
+<script is:inline>
+  (() => {
+    // Accordion Logic
+    const sections = Array.from(document.querySelectorAll('[data-docs-section]'));
+    sections.forEach((section) => {
+      const trigger = section.querySelector('[data-docs-section-trigger]');
+      const content = section.querySelector('[data-docs-section-content]');
+      
+      if (!trigger || !content) return;
+
+      trigger.addEventListener('click', () => {
+        const isCurrentlyExpanded = section.getAttribute('data-expanded') === 'true';
+        
+        // Close all sections first (accordion behavior)
+        sections.forEach(s => {
+          s.setAttribute('data-expanded', 'false');
+          const t = s.querySelector('[data-docs-section-trigger]');
+          if (t) t.setAttribute('aria-expanded', 'false');
+          const c = s.querySelector('[data-docs-section-content]');
+          if (c) c.setAttribute('data-expanded', 'false');
+        });
+
+        // Toggle the clicked one (if it wasn't expanded, expand it)
+        if (!isCurrentlyExpanded) {
+          section.setAttribute('data-expanded', 'true');
+          trigger.setAttribute('aria-expanded', 'true');
+          content.setAttribute('data-expanded', 'true');
+        }
+      });
+    });
+  })();
+</script>

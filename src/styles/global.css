@@ -145,6 +145,14 @@ code {
   border-radius: 4px;
 }
 
+pre code {
+  font-size: inherit;
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+
 pre:not(.code-terminal-section) {
   background-color: rgb(var(--brand-surface-code-rgb));
   border: 1px solid rgb(var(--brand-border-subtle-rgb) / 0.12);
@@ -220,5 +228,14 @@ section {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  [data-mode-content] {
+    display: none;
+  }
+
+  html[data-site-mode='human'] [data-mode-content='human'],
+  html[data-site-mode='agent'] [data-mode-content='agent'] {
+    display: block;
   }
 }

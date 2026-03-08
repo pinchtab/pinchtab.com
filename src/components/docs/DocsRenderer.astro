@@ -1,0 +1,26 @@
+---
+import TerminalBlock from './TerminalBlock.astro';
+import DiagramBlock from './DiagramBlock.astro';
+import type { ContentBlock } from '@/lib/docs/types';
+
+export interface Props {
+  blocks: ContentBlock[];
+}
+
+const { blocks } = Astro.props;
+---
+
+<div class="space-y-7 text-brand-text-muted leading-relaxed [&_a]:text-brand-accent [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-brand-accent-light [&_blockquote]:border-l-2 [&_blockquote]:border-brand-border-subtle/20 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-brand-text-muted [&_code:not(pre_code)]:rounded [&_code:not(pre_code)]:bg-brand-accent-glow-bright [&_code:not(pre_code)]:px-1.5 [&_code:not(pre_code)]:py-0.5 [&_code:not(pre_code)]:text-[0.9em] [&_code:not(pre_code)]:text-brand-accent-light [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:text-brand-text [&_h1]:tracking-tight [&_h1]:mt-4 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-brand-text [&_h2]:tracking-tight [&_h2]:mt-[72px] [&_h2]:scroll-mt-24 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-brand-text [&_h3]:mt-10 [&_h3]:scroll-mt-24 [&_hr]:border-brand-border-subtle/5 [&_hr]:my-12 [&_li]:ml-5 [&_li]:list-disc [&_ol>li]:list-decimal [&_p]:text-[1rem] [&_pre:not(.code-terminal-section)]:my-8 [&_pre:not(.code-terminal-section)]:rounded-xl [&_pre:not(.code-terminal-section)]:border [&_pre:not(.code-terminal-section)]:border-brand-border-subtle/10 [&_pre:not(.code-terminal-section)]:bg-brand-surface-code [&_ul]:space-y-3">
+  {blocks.map((block) => {
+    switch (block.type) {
+      case 'html':
+        return <Fragment set:html={block.html} />;
+      case 'terminal':
+        return <TerminalBlock agent={block.agent} human={block.human} response={block.response} />;
+      case 'diagram':
+        return <DiagramBlock content={block.content} format={block.format} />;
+      default:
+        return null;
+    }
+  })}
+</div>

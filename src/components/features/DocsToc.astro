@@ -1,0 +1,111 @@
+---
+import { cn } from '@/lib/utils';
+import type { DocsPageHeading } from '@/lib/docs';
+
+export interface Props {
+  headings: DocsPageHeading[];
+  class?: string;
+}
+
+const { headings, class: className } = Astro.props;
+const tocHeadings = headings.filter((heading) => heading.depth === 2);
+---
+
+<aside class={cn("hidden xl:block xl:sticky xl:top-24 self-start", className)} data-docs-toc>
+  <div class="p-2 pt-8">
+    <div class="px-2 pt-1 flex items-center justify-between gap-2.5 text-[0.65rem] font-bold uppercase tracking-[0.2em] text-brand-text-dim">
+      <span>Contents</span>
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        stroke-width="3" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        class="h-2.5 w-2.5 opacity-30"
+      >
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </div>
+    {
+      tocHeadings.length > 0 ? (
+        <ul class="mt-4 space-y-1 ml-1.5">
+          {tocHeadings.map((heading) => (
+            <li>
+              <a
+                href={`#${heading.slug}`}
+                class="block rounded-md px-2 py-1 text-[0.82rem] text-brand-text-muted transition-all duration-200 hover:bg-white/5 hover:text-brand-text"
+                data-docs-toc-link={heading.slug}
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="mt-4 px-2 text-[0.85rem] text-brand-text-dim/60">No indexed headings.</p>
+      )
+    }
+  </div>
+</aside>
+
+<script is:inline>
+  (() => {
+    // TOC Logic
+    const tocRoots = Array.from(document.querySelectorAll('[data-docs-toc]'));
+    if (!tocRoots.length) return;
+
+    const ACTIVE_CLASSES = ['text-brand-accent', 'font-semibold'];
+    const INACTIVE_CLASSES = ['text-brand-text-muted'];
+
+    tocRoots.forEach((root) => {
+      const links = Array.from(root.querySelectorAll('[data-docs-toc-link]'));
+      if (!links.length) return;
+
+      const entries = links
+        .map((link) => {
+          const id = link.getAttribute('data-docs-toc-link') || '';
+          const heading = id ? document.getElementById(id) : null;
+          return { link, id, heading };
+        })
+        .filter((entry) => entry.heading);
+
+      if (!entries.length) return;
+
+      const setActive = (activeId) => {
+        links.forEach((link) => {
+          const isActive = link.getAttribute('data-docs-toc-link') === activeId;
+          ACTIVE_CLASSES.forEach((className) => link.classList.toggle(className, isActive));
+          INACTIVE_CLASSES.forEach((className) => link.classList.toggle(className, !isActive));
+        });
+      };
+
+      const pickActiveHeading = () => {
+        const marker = 150;
+        let activeId = entries[0].id;
+
+        entries.forEach((entry) => {
+          const top = entry.heading.getBoundingClientRect().top;
+          if (top - marker <= 0) {
+            activeId = entry.id;
+          }
+        });
+
+        setActive(activeId);
+      };
+
+      links.forEach((link) => {
+        link.addEventListener('click', () => {
+          const id = link.getAttribute('data-docs-toc-link');
+          if (id) setActive(id);
+        });
+      });
+
+      window.addEventListener('scroll', pickActiveHeading, { passive: true });
+      window.addEventListener('resize', pickActiveHeading);
+      window.addEventListener('hashchange', pickActiveHeading);
+      pickActiveHeading();
+    });
+  })();
+</script>

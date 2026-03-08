@@ -1,0 +1,65 @@
+---
+import MermaidDiagram from '@/components/ui/MermaidDiagram.astro';
+
+export interface Props {
+  content: string;
+  format?: 'ascii' | 'mermaid';
+}
+
+const { content, format = 'ascii' } = Astro.props;
+
+const isDiagramConnector = (char: string) => {
+  return /[┌┐└┘├┤┬┴┼│─═╔╗╚╝║┆┄┈┉┊┋╭╮╯╰→←↑↓]/.test(char);
+};
+
+const renderDiagramLine = (line: string) => {
+  if (line.trim().length === 0) {
+    return '<span class="block h-[1.45rem]"></span>';
+  }
+
+  const chars = Array.from(line);
+  const styled = chars
+    .map((char) => {
+      if (char === ' ') {
+        return ' ';
+      }
+      if (isDiagramConnector(char)) {
+        return `<span class="text-brand-accent/70">${char
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')}</span>`;
+      }
+      return `<span class="text-brand-text">${char
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')}</span>`;
+    })
+    .join('');
+
+  return `<span class="block px-2 py-0.5">${styled}</span>`;
+};
+
+const diagramHtml = content
+  .replace(/\r\n/g, '\n')
+  .replace(/\s+$/, '')
+  .split('\n')
+  .map((line) => renderDiagramLine(line))
+  .join('');
+---
+
+{
+  format === 'mermaid' ? (
+    <MermaidDiagram chart={content} class="my-7" />
+  ) : (
+    <figure
+      class="my-7 overflow-hidden rounded-2xl border border-brand-border-subtle/30 bg-[linear-gradient(180deg,rgb(var(--brand-surface-rgb)/0.75),rgb(var(--brand-bg-rgb)/0.88))] shadow-[0_0_40px_rgb(var(--brand-accent-rgb)/0.08)]"
+      data-docs-diagram
+    >
+      <figcaption class="flex items-center justify-between border-b border-brand-border-subtle/20 px-5 py-3">
+        <span class="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-brand-text-dim">Architecture Diagram</span>
+        <span class="text-[0.68rem] uppercase tracking-[0.12em] text-brand-text-dim">ASCII</span>
+      </figcaption>
+      <pre class="code-terminal-section m-0 overflow-x-auto whitespace-pre px-4 py-4 font-mono text-[0.81rem] leading-[1.58] border-0 bg-transparent text-left shadow-none sm:px-5 sm:py-5"><code set:html={diagramHtml}></code></pre>
+    </figure>
+  )
+}
