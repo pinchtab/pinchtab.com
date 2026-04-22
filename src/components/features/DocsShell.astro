@@ -15,22 +15,15 @@ const { docsData, currentPage } = Astro.props;
 
 <ModeSwitch />
 
-<div class="w-full px-4 py-8 sm:px-6 lg:px-8">
-  <div class="mx-auto w-full max-w-[1720px]">
-    <div class="grid gap-8 xl:grid-cols-[240px_minmax(0,1fr)_220px]">
+<DocsSidebar docsData={docsData} currentPage={currentPage} class="hidden xl:flex fixed left-6 top-6 z-40" />
+<DocsToc headings={currentPage.headings} class="hidden xl:block fixed right-6 top-6 z-40" />
 
-      <DocsSidebar docsData={docsData} currentPage={currentPage} />
-
-      <article class="min-w-0">
-        <div class="p-4 sm:p-8 xl:px-16 max-w-4xl mx-auto">
-          <DocsRenderer blocks={currentPage.blocks} />
-        </div>
-      </article>
-
-      <DocsToc headings={currentPage.headings} />
-
+<div class="w-full px-4 py-6 sm:px-6 lg:px-8">
+  <article class="min-w-0 xl:mx-65">
+    <div class="p-4 sm:p-8 xl:px-16 max-w-4xl mx-auto">
+      <DocsRenderer blocks={currentPage.blocks} />
     </div>
-  </div>
+  </article>
 </div>
 
 <script is:inline>

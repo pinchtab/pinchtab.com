@@ -8,4 +8,4 @@ export const TEMP_SKIPPED_DOCS = new Set<string>([
   'references/api-reference.json',
 ]);
 export const USE_LOCAL_DOCS = false;
-export const LOCAL_DOCS_PATH = path.resolve(process.cwd(), '../pt-bosch/docs');
+export const LOCAL_DOCS_PATH = path.resolve(process.cwd(), '../pinchtab/docs');

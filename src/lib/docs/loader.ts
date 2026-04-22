@@ -8,12 +8,14 @@ import type {
   DocsManifestSection,
   ContentBlock 
 } from './types';
-import { 
-  DOCS_BRANCH, 
-  DOCS_JSON_URL, 
-  LOCAL_DOCS_PATH, 
-  TEMP_SKIPPED_DOCS, 
-  USE_LOCAL_DOCS 
+import {
+  DOCS_BRANCH,
+  DOCS_JSON_URL,
+  LOCAL_DOCS_PATH,
+  REPO_NAME,
+  REPO_OWNER,
+  TEMP_SKIPPED_DOCS,
+  USE_LOCAL_DOCS
 } from './config';
 import { 
   normalizeSourcePath, 
@@ -487,7 +489,11 @@ export async function loadDocsFromRemote(): Promise<DocsData> {
         transformDocsTables(transformDocsCodeBlocks(page.html)),
         page.sourceUrl
       ),
-      sourcePathToSlug
+      {
+        sourcePathToSlug,
+        repoOwner: REPO_OWNER,
+        repoName: REPO_NAME,
+      }
     );
 
     page.html = transformedHtml;
