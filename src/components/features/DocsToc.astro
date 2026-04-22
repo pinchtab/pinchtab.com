@@ -11,31 +11,19 @@ const { headings, class: className } = Astro.props;
 const tocHeadings = headings.filter((heading) => heading.depth === 2);
 ---
 
-<aside class={cn("hidden xl:block xl:sticky xl:top-24 self-start", className)} data-docs-toc>
-  <div class="p-2 pt-8">
-    <div class="px-2 pt-1 flex items-center justify-between gap-2.5 text-[0.65rem] font-bold uppercase tracking-[0.2em] text-brand-text-dim">
+<aside class={cn("w-45 max-h-[calc(100vh-3rem)] overflow-y-auto docs-toc-scroll", className)} data-docs-toc>
+  <div class="pt-17 px-1">
+    <div class="px-2 py-2 flex items-center gap-2 text-[0.6rem] font-bold uppercase tracking-[0.15em] text-brand-text-dim">
       <span>Contents</span>
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        stroke-width="3" 
-        stroke-linecap="round" 
-        stroke-linejoin="round" 
-        class="h-2.5 w-2.5 opacity-30"
-      >
-        <polyline points="9 18 15 12 9 6"></polyline>
-      </svg>
     </div>
     {
       tocHeadings.length > 0 ? (
-        <ul class="mt-4 space-y-1 ml-1.5">
+        <ul class="mt-2 space-y-0.5">
           {tocHeadings.map((heading) => (
             <li>
               <a
                 href={`#${heading.slug}`}
-                class="block rounded-md px-2 py-1 text-[0.82rem] text-brand-text-muted transition-all duration-200 hover:bg-white/5 hover:text-brand-text"
+                class="block rounded px-2 py-1 text-[0.75rem] text-brand-text-muted transition-all duration-200 hover:bg-white/5 hover:text-brand-text"
                 data-docs-toc-link={heading.slug}
               >
                 {heading.text}
@@ -44,11 +32,31 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2);
           ))}
         </ul>
       ) : (
-        <p class="mt-4 px-2 text-[0.85rem] text-brand-text-dim/60">No indexed headings.</p>
+        <p class="mt-2 px-2 text-[0.75rem] text-brand-text-dim/60">No headings.</p>
       )
     }
   </div>
 </aside>
+
+<style>
+  .docs-toc-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+  .docs-toc-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+  .docs-toc-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .docs-toc-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+  }
+  .docs-toc-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+</style>
 
 <script is:inline>
   (() => {

@@ -146,10 +146,10 @@ function styleTableRowCells(rowHtml: string, isApiTable: boolean): string {
       const value = stripHtmlTags(content).toUpperCase();
       if (value === 'X') {
         content =
-          '<span class="inline-flex min-w-[2rem] justify-center rounded-md border border-brand-red/35 bg-brand-red/12 px-2 py-1 text-[0.76rem] font-semibold uppercase tracking-[0.06em] text-brand-red">X</span>';
+          '<span class="inline-flex min-w-8 justify-center rounded-md border border-brand-red/35 bg-brand-red/12 px-2 py-1 text-[0.76rem] font-semibold uppercase tracking-[0.06em] text-brand-red">X</span>';
       } else if (value === '✓' || value === 'YES' || value === 'TRUE') {
         content =
-          '<span class="inline-flex min-w-[2rem] justify-center rounded-md border border-brand-green/35 bg-brand-green/15 px-2 py-1 text-[0.76rem] font-semibold uppercase tracking-[0.06em] text-brand-green">✓</span>';
+          '<span class="inline-flex min-w-8 justify-center rounded-md border border-brand-green/35 bg-brand-green/15 px-2 py-1 text-[0.76rem] font-semibold uppercase tracking-[0.06em] text-brand-green">✓</span>';
       }
     }
 
@@ -171,7 +171,7 @@ export function transformDocsTables(html: string): string {
 
     const styledTbody = tbodyInner.replace(/<tr>([\s\S]*?)<\/tr>/gi, (_, rawRow: string) => {
       const styledCells = styleTableRowCells(rawRow, isApiTable);
-      return `<tr class="border-t border-brand-border-subtle/15 transition-colors hover:bg-white/[0.02]">${styledCells}</tr>`;
+      return `<tr class="border-t border-brand-border-subtle/15 transition-colors hover:bg-white/2">${styledCells}</tr>`;
     });
 
     return `
@@ -225,11 +225,16 @@ export function transformDocsImageSources(html: string, sourceUrl: string): stri
   });
 }
 
-export function transformDocsInternalLinks(html: string, sourcePathToSlug: Map<string, string>): string {
-  // Matches hrefs that look like internal markdown files or paths
-  // e.g., guides/expert-bridge-mode.md, ./setup.md, etc.
+export interface InternalLinkOptions {
+  sourcePathToSlug: Map<string, string>;
+  repoOwner: string;
+  repoName: string;
+}
+
+export function transformDocsInternalLinks(html: string, options: InternalLinkOptions): string {
+  const { sourcePathToSlug, repoOwner, repoName } = options;
+
   return html.replace(/href=(["'])([^"']+)\1/gi, (match, quote, href: string) => {
-    // Skip external links, anchors, and absolute paths
     if (/^(https?:\/\/|\/|#)/i.test(href)) {
       return match;
     }
@@ -237,20 +242,23 @@ export function transformDocsInternalLinks(html: string, sourcePathToSlug: Map<s
     const [pathWithoutHash, hashFragment = ''] = href.split('#', 2);
     const hashSuffix = hashFragment ? `#${hashFragment}` : '';
 
-    // Try to find a matching slug
     const cleanHref = pathWithoutHash.replace(/^\.\//, '');
     const hrefWithMd = cleanHref.endsWith('.md') ? cleanHref : cleanHref + '.md';
-    
-    // 1. Direct match
+
     if (sourcePathToSlug.has(hrefWithMd)) {
       return `href=${quote}/docs/${sourcePathToSlug.get(hrefWithMd)}${hashSuffix}${quote}`;
     }
 
-    // 2. Search for a match in our map by filename (if not a full path)
     for (const [sourcePath, slug] of sourcePathToSlug.entries()) {
       if (sourcePath.endsWith(hrefWithMd)) {
         return `href=${quote}/docs/${slug}${hashSuffix}${quote}`;
       }
+    }
+
+    if (/\.md$/i.test(cleanHref)) {
+      const docPath = cleanHref.startsWith('docs/') ? cleanHref : `docs/${cleanHref}`;
+      const githubUrl = `https://github.com/${repoOwner}/${repoName}/blob/main/${docPath}${hashSuffix}`;
+      return `href=${quote}${githubUrl}${quote} target=${quote}_blank${quote} rel=${quote}noopener noreferrer${quote}`;
     }
 
     return match;
