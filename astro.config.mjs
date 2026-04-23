@@ -20,6 +20,7 @@ export default defineConfig({
 
   // Vite + Tailwind v4
   vite: {
+    // @ts-expect-error - Vite version mismatch between Tailwind and Astro
     plugins: [tailwindcss()],
     resolve: {
       alias: {
