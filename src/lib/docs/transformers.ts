@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { escapeHtml, decodeHtmlEntities, stripHtmlTags, trimEmptyLines } from './utils';
 
 function extractCodeLanguage(preAttrs: string, codeAttrs: string): string | null {
@@ -227,36 +228,45 @@ export function transformDocsImageSources(html: string, sourceUrl: string): stri
 
 export interface InternalLinkOptions {
   sourcePathToSlug: Map<string, string>;
+  /** Doc source path of the page being transformed, used to resolve relative links. */
+  sourcePath: string;
   repoOwner: string;
   repoName: string;
 }
 
 export function transformDocsInternalLinks(html: string, options: InternalLinkOptions): string {
-  const { sourcePathToSlug, repoOwner, repoName } = options;
+  const { sourcePathToSlug, sourcePath, repoOwner, repoName } = options;
+  const pageDir = path.posix.dirname(sourcePath);
+  const pageDirPrefix = pageDir === '.' ? '' : `${pageDir}/`;
 
   return html.replace(/href=(["'])([^"']+)\1/gi, (match, quote, href: string) => {
-    if (/^(https?:\/\/|\/|#)/i.test(href)) {
+    if (/^(https?:\/\/|\/|#|mailto:|tel:)/i.test(href)) {
       return match;
     }
 
     const [pathWithoutHash, hashFragment = ''] = href.split('#', 2);
     const hashSuffix = hashFragment ? `#${hashFragment}` : '';
-
-    const cleanHref = pathWithoutHash.replace(/^\.\//, '');
-    const hrefWithMd = cleanHref.endsWith('.md') ? cleanHref : cleanHref + '.md';
-
-    if (sourcePathToSlug.has(hrefWithMd)) {
-      return `href=${quote}/docs/${sourcePathToSlug.get(hrefWithMd)}${hashSuffix}${quote}`;
+    if (!pathWithoutHash) {
+      return match;
     }
 
-    for (const [sourcePath, slug] of sourcePathToSlug.entries()) {
-      if (sourcePath.endsWith(hrefWithMd)) {
-        return `href=${quote}/docs/${slug}${hashSuffix}${quote}`;
-      }
+    const cleanHref = pathWithoutHash.endsWith('.md') ? pathWithoutHash : `${pathWithoutHash}.md`;
+    // Resolve the link relative to the current page's directory so that
+    // `./x.md` and `../sibling/x.md` map to the correct doc source path.
+    const resolved = path.posix.normalize(`${pageDirPrefix}${cleanHref}`);
+
+    if (sourcePathToSlug.has(resolved)) {
+      return `href=${quote}/docs/${sourcePathToSlug.get(resolved)}${hashSuffix}${quote}`;
+    }
+    // Fall back to a root-relative match (e.g. links that already omit the leading directory).
+    if (sourcePathToSlug.has(cleanHref)) {
+      return `href=${quote}/docs/${sourcePathToSlug.get(cleanHref)}${hashSuffix}${quote}`;
     }
 
     if (/\.md$/i.test(cleanHref)) {
-      const docPath = cleanHref.startsWith('docs/') ? cleanHref : `docs/${cleanHref}`;
+      // Target exists in the repo but is not a published page: link to the source on GitHub.
+      const repoRelative = resolved.replace(/^(?:\.\.\/)+/, '');
+      const docPath = repoRelative.startsWith('docs/') ? repoRelative : `docs/${repoRelative}`;
       const githubUrl = `https://github.com/${repoOwner}/${repoName}/blob/main/${docPath}${hashSuffix}`;
       return `href=${quote}${githubUrl}${quote} target=${quote}_blank${quote} rel=${quote}noopener noreferrer${quote}`;
     }

@@ -491,6 +491,7 @@ export async function loadDocsFromRemote(): Promise<DocsData> {
       ),
       {
         sourcePathToSlug,
+        sourcePath: page.sourcePath,
         repoOwner: REPO_OWNER,
         repoName: REPO_NAME,
       }
