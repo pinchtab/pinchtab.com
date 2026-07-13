@@ -1,0 +1,21 @@
+---
+import MascotCrossfade from '@/components/ui/MascotCrossfade.astro';
+import ModeSwitch from '@/components/ui/ModeSwitch.astro';
+---
+
+<a
+  href="/"
+  aria-label="Back to home"
+  class="fixed left-4 top-4 z-120 inline-flex rounded-sm p-1 transition hover:bg-white/5 sm:left-6 sm:top-6"
+>
+  <MascotCrossfade
+    humanImage="/mascot.png"
+    agentImage="/mascot-agent.png"
+    alt="PinchTab home"
+    animationVariant="pop"
+    className="h-9 w-9 object-contain"
+    agentSizeMultiplier={1.45}
+  />
+</a>
+
+<ModeSwitch />

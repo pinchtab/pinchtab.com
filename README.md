@@ -34,9 +34,13 @@ Open `http://localhost:4321`.
 
 - `src/components/ui` - reusable UI primitives
 - `src/components/features` - page sections
+- `src/components/blog` - blog cards and preview sections
 - `src/components/layout` - base layout + footer
+- `src/content/blog` - repo-native blog posts
+- `src/lib/blog.ts` - local blog loader and markdown rendering
 - `src/pages/index.astro` - homepage composition
-- `public/` - static assets (`install.sh`, `rum.js`, manifest, icons, etc.)
+- `src/pages/blog` - blog index and article pages
+- `public/` - static assets (`install.sh`, manifest, icons, etc.)
 - `.github/workflows/` - CI and deploy workflows
 
 ## CI and Deploy

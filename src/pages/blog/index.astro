@@ -1,0 +1,55 @@
+---
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import BlogCard from '@/components/blog/BlogCard.astro';
+import BlogTopBar from '@/components/blog/BlogTopBar.astro';
+import Button from '@/components/ui/Button.astro';
+import { getAllPosts } from '@/lib/blog';
+
+const posts = await getAllPosts();
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Pinchtab Blog',
+  description: 'Release notes, implementation details, browser automation tradeoffs, and field reports from building PinchTab.',
+  url: 'https://pinchtab.com/blog',
+};
+---
+
+<BaseLayout
+  title="Pinchtab Blog"
+  description="Release notes, implementation details, browser automation tradeoffs, and field reports from building PinchTab."
+  canonical="/blog"
+  structuredData={structuredData}
+>
+  <BlogTopBar />
+
+  <section class="px-6 pb-18 pt-22 sm:px-8">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-12 max-w-4xl space-y-5">
+        <div class="section-label">Blog</div>
+        <h1 class="text-balance text-5xl font-bold tracking-[-0.05em] text-brand-text sm:text-6xl">
+          What we’re building, fixing, and learning.
+        </h1>
+        <p class="max-w-3xl text-lg leading-8 text-brand-text-muted">
+          Release context, browser automation design notes, and the ugly little edge cases that force better tools.
+        </p>
+      </div>
+
+      {posts.length > 0 ? (
+        <div class="grid gap-6 lg:grid-cols-2">
+          {posts.map((post) => (
+            <BlogCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <div class="rounded-3xl border border-brand-border-subtle/15 bg-brand-surface/70 px-8 py-14 text-center">
+          <p class="mb-5 text-lg text-brand-text-muted">No posts yet, but the blog is wired and ready.</p>
+          <Button href="/" variant="secondary" size="md" class="h-12 rounded-[10px] px-6 text-[0.9rem]">
+            Back to homepage
+          </Button>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>

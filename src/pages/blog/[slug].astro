@@ -1,0 +1,157 @@
+---
+import type { MarkdownHeading } from 'astro';
+import Button from '@/components/ui/Button.astro';
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import BlogTopBar from '@/components/blog/BlogTopBar.astro';
+import { getAllPosts, getPostBySlug } from '@/lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const slug = Astro.params.slug ?? '';
+const post = await getPostBySlug(slug);
+if (!post) {
+  throw new Error(`Blog post not found: ${slug}`);
+}
+
+const allPosts = await getAllPosts();
+const relatedPosts = allPosts.filter((entry) => entry.slug !== post.slug).slice(0, 3);
+const publishedLabel = post.pubDate.toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.description,
+  datePublished: post.pubDate.toISOString(),
+  dateModified: (post.updatedDate ?? post.pubDate).toISOString(),
+  author: {
+    '@type': 'Person',
+    name: post.author,
+  },
+  image: `https://pinchtab.com${post.heroImage}`,
+  mainEntityOfPage: `https://pinchtab.com/blog/${post.slug}`,
+  publisher: {
+    '@type': 'Organization',
+    name: 'Pinchtab',
+    url: 'https://pinchtab.com',
+  },
+};
+---
+
+<BaseLayout
+  title={`${post.title} | Pinchtab Blog`}
+  description={post.description}
+  canonical={`/blog/${post.slug}`}
+  ogType="article"
+  ogImage={post.heroImage}
+  structuredData={structuredData}
+>
+  <BlogTopBar />
+
+  <section class="px-6 pb-18 pt-20 sm:px-8">
+    <div class="mx-auto max-w-6xl">
+      <a
+        href="/blog"
+        class="mb-8 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-brand-text-dim transition-colors hover:text-brand-accent"
+      >
+        <span aria-hidden="true">←</span>
+        All posts
+      </a>
+
+      <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-start">
+        <article class="min-w-0">
+          <header class="mb-10 space-y-6 border-b border-brand-border-subtle/12 pb-10">
+            <div class="flex flex-wrap gap-2">
+              {post.tags.map((tag) => (
+                <span class="rounded-full border border-brand-border-subtle/15 bg-brand-surface px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-brand-text-dim">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div class="space-y-4">
+              <h1 class="max-w-4xl text-balance text-4xl font-bold tracking-[-0.05em] text-brand-text sm:text-6xl">
+                {post.title}
+              </h1>
+              <p class="max-w-3xl text-lg leading-8 text-brand-text-muted">
+                {post.description}
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 text-sm text-brand-text-dim">
+              <span>{post.author}</span>
+              <span aria-hidden="true">•</span>
+              <time datetime={post.pubDate.toISOString()}>{publishedLabel}</time>
+              <span aria-hidden="true">•</span>
+              <span>{post.readTime}</span>
+            </div>
+          </header>
+
+          <div class="blog-prose" set:html={post.html}></div>
+        </article>
+
+        <aside class="space-y-8 lg:sticky lg:top-8">
+          {post.headings.length > 0 && (
+            <div class="rounded-3xl border border-brand-border-subtle/15 bg-brand-surface/70 p-6">
+              <div class="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-brand-text-dim">
+                On this page
+              </div>
+              <nav class="space-y-3">
+                {post.headings
+                  .filter((heading: MarkdownHeading) => heading.depth <= 2)
+                  .map((heading: MarkdownHeading) => (
+                    <a
+                      href={`#${heading.slug}`}
+                      class="block text-sm leading-6 text-brand-text-muted transition-colors hover:text-brand-accent"
+                    >
+                      {heading.text}
+                    </a>
+                  ))}
+              </nav>
+            </div>
+          )}
+
+          <div class="rounded-3xl border border-brand-border-subtle/15 bg-brand-surface/70 p-6">
+            <div class="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-text-dim">
+              Keep reading
+            </div>
+            <div class="space-y-5">
+              {relatedPosts.map((entry) => (
+                <a href={`/blog/${entry.slug}`} class="block space-y-2 transition-colors hover:text-brand-accent">
+                  <div class="text-sm text-brand-text-dim">
+                    {entry.pubDate.toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </div>
+                  <div class="text-base font-semibold leading-6 text-brand-text">
+                    {entry.title}
+                  </div>
+                </a>
+              ))}
+              {relatedPosts.length === 0 && (
+                <p class="text-sm leading-6 text-brand-text-muted">
+                  More posts will land here as the journal grows.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <Button href="https://github.com/pinchtab/pinchtab/releases/latest" variant="secondary" size="md" class="h-12 w-full rounded-[10px] text-[0.9rem]">
+            Latest release
+          </Button>
+        </aside>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

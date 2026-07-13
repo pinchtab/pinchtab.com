@@ -1,0 +1,58 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0B1020"/>
+  <rect x="26" y="26" width="1148" height="578" rx="28" fill="url(#bg)" stroke="rgba(255,255,255,0.08)"/>
+
+  <circle cx="284" cy="390" r="110" fill="url(#ptGlow)" opacity="0.5"/>
+  <circle cx="930" cy="390" r="124" fill="url(#cbGlow)" opacity="0.5"/>
+
+  <text x="78" y="100" fill="#FACC15" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="4">PINCHTAB BLOG</text>
+  <text x="78" y="166" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="54" font-weight="700">Control CloakBrowser</text>
+  <text x="78" y="224" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="54" font-weight="700">with PinchTab</text>
+  <text x="78" y="268" fill="#94A3B8" font-family="Arial, sans-serif" font-size="24">Run PinchTab in cloak mode and use CloakBrowser as the browser runtime.</text>
+
+  <g>
+    <circle cx="284" cy="390" r="84" fill="#111827" stroke="#FACC15" stroke-width="4"/>
+    <circle cx="284" cy="390" r="64" fill="#172033"/>
+    <text x="284" y="382" text-anchor="middle" fill="#FACC15" font-family="Arial, sans-serif" font-size="28" font-weight="700">PT</text>
+    <text x="284" y="414" text-anchor="middle" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="20" font-weight="700">PinchTab</text>
+  </g>
+
+  <g>
+    <circle cx="930" cy="390" r="96" fill="#0E1A31" stroke="#60A5FA" stroke-width="4"/>
+    <circle cx="930" cy="390" r="74" fill="#12223E"/>
+    <text x="930" y="382" text-anchor="middle" fill="#93C5FD" font-family="Arial, sans-serif" font-size="28" font-weight="700">CB</text>
+    <text x="930" y="414" text-anchor="middle" fill="#DBEAFE" font-family="Arial, sans-serif" font-size="20" font-weight="700">CloakBrowser</text>
+  </g>
+
+  <g>
+    <rect x="472" y="334" width="270" height="112" rx="24" fill="#111827" stroke="#FACC15" stroke-width="2"/>
+    <text x="607" y="380" text-anchor="middle" fill="#FACC15" font-family="Arial, sans-serif" font-size="22" font-weight="700">PinchTab API</text>
+    <text x="607" y="412" text-anchor="middle" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="20">nav • click • snap</text>
+  </g>
+
+  <path d="M368 390H472" stroke="#FACC15" stroke-width="8" stroke-linecap="round"/>
+  <path d="M742 390H834" stroke="#60A5FA" stroke-width="8" stroke-linecap="round"/>
+  <path d="M452 390L434 378V402L452 390Z" fill="#FACC15"/>
+  <path d="M814 390L796 378V402L814 390Z" fill="#60A5FA"/>
+
+  <rect x="78" y="522" width="188" height="44" rx="12" fill="#121A2D" stroke="#334155"/>
+  <text x="172" y="550" text-anchor="middle" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="18" font-weight="700">Cloak mode</text>
+
+  <rect x="948" y="522" width="184" height="44" rx="12" fill="#10203B" stroke="#1D4ED8"/>
+  <text x="1040" y="550" text-anchor="middle" fill="#DBEAFE" font-family="Arial, sans-serif" font-size="18" font-weight="700">Native patches</text>
+
+  <defs>
+    <linearGradient id="bg" x1="90" y1="60" x2="1122" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10172A"/>
+      <stop offset="1" stop-color="#0A1120"/>
+    </linearGradient>
+    <radialGradient id="ptGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(284 390) rotate(90) scale(110)">
+      <stop stop-color="#FACC15"/>
+      <stop offset="1" stop-color="#FACC15" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cbGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(930 390) rotate(90) scale(124)">
+      <stop stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#60A5FA" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
