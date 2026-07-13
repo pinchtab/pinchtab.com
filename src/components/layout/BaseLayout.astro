@@ -10,6 +10,7 @@ export interface Props {
   ogImage?: string;
   ogType?: 'website' | 'article';
   footerBorder?: boolean;
+  structuredData?: Record<string, any> | null;
 }
 
 const {
@@ -20,13 +21,14 @@ const {
   ogImage = '/og-image.png',
   ogType = 'website',
   footerBorder = true,
+  structuredData: structuredDataOverride,
 } = Astro.props;
 
 const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : Astro.url.origin;
 const canonicalUrl = canonical ? new URL(canonical, siteUrl).toString() : new URL(Astro.url.pathname, siteUrl).toString();
 const ogImageUrl = new URL(ogImage, siteUrl).toString();
 
-const structuredData = {
+const structuredData = structuredDataOverride === undefined ? {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: 'Pinchtab',
@@ -43,7 +45,7 @@ const structuredData = {
     name: 'Luigi Agosti',
     url: 'https://github.com/luigi-agosti',
   },
-};
+} : structuredDataOverride;
 ---
 
 <!doctype html>
@@ -51,6 +53,15 @@ const structuredData = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-XQWNNNPLT5"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XQWNNNPLT5');
+    </script>
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Luigi Agosti" />
@@ -75,7 +86,9 @@ const structuredData = {
     <link rel="apple-touch-icon" sizes="180x180" href="/icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#fbbf24" />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+    {structuredData ? (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+    ) : null}
     <script is:inline>
       (() => {
         const normalizeMode = (mode) => (mode === 'agent' || mode === 'agents' ? 'agent' : 'human');
@@ -140,6 +153,5 @@ const structuredData = {
       <slot />
     </main>
     <Footer border={footerBorder} />
-    <script is:inline src="/rum.js"></script>
   </body>
 </html>
