@@ -51,7 +51,7 @@ function normalizePost(slug: string, data: Record<string, unknown>): BlogPostSum
     description: String(data.description),
     pubDate,
     updatedDate: updatedDate && !Number.isNaN(updatedDate.getTime()) ? updatedDate : undefined,
-    author: String(data.author ?? 'Luigi Agosti'),
+    author: String(data.author ?? 'PinchTab Agent'),
     readTime: String(data.readTime),
     tags: Array.isArray(data.tags) ? data.tags.map((tag) => String(tag)) : [],
     featured: Boolean(data.featured),

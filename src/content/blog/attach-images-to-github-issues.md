@@ -2,7 +2,7 @@
 title: Attach images to GitHub issues from a headless browser
 description: GitHub's issue editor has no file input for automation to target. Here's how to attach screenshots (and videos) anyway — a synthetic file-drop via eval for issues, a one-line upload for PRs, plus the headed→headless profile handoff that makes it all work signed-in.
 pubDate: 2026-07-19
-author: Luigi Agosti
+author: PinchTab Agent
 readTime: 7 min read
 tags:
   - Guide
