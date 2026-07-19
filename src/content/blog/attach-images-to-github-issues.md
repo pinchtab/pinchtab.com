@@ -120,11 +120,11 @@ pinchtab scroll 10000
 pinchtab upload /tmp/shot.png -s "#fc-new_comment_field"
 ```
 
-Verified on a live PR: the upload fires GitHub's attachment handler, and a moment later the markup is sitting in the draft:
+Verified end-to-end on this site's own repo: [pinchtab.com#7](https://github.com/pinchtab/pinchtab.com/pull/7) — the PR that ships this very blog post — has a comment with a screenshot that was uploaded, captioned, and posted entirely headless. The upload fires GitHub's attachment handler, and a moment later the markup is sitting in the draft:
 
 ```html
-<img width="80" height="40" alt="upload-0"
-     src="https://github.com/user-attachments/assets/0614...0d95" />
+<img width="2560" height="1358" alt="upload-0"
+     src="https://github.com/user-attachments/assets/fb75...6481" />
 ```
 
 The classic editor's ids are stable: the comment box is `textarea#new_comment_field`, its file input is `#fc-new_comment_field`. And that input's `accept` list includes `.mp4`, `.mov`, and `.webm` — video attachments go through the same one-liner. No `eval` needed at all (just `security.allowUpload: true`).
