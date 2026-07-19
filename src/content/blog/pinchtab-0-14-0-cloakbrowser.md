@@ -11,6 +11,7 @@ tags:
   - Privacy
 featured: true
 heroImage: /blog/control-cloakbrowser-with-pinchtab.jpg
+ogImage: /blog/control-cloakbrowser-with-pinchtab-og.png
 ---
 
 This release is really about one thing: you can now run **PinchTab in cloak mode** and use **CloakBrowser** as the browser runtime.

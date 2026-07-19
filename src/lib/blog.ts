@@ -16,6 +16,7 @@ export interface BlogPostSummary {
   featured: boolean;
   draft: boolean;
   heroImage: string;
+  ogImage: string;
 }
 
 export interface BlogPost extends BlogPostSummary {
@@ -57,6 +58,7 @@ function normalizePost(slug: string, data: Record<string, unknown>): BlogPostSum
     featured: Boolean(data.featured),
     draft: Boolean(data.draft),
     heroImage: String(data.heroImage ?? '/og-image.png'),
+    ogImage: String(data.ogImage ?? data.heroImage ?? '/og-image.png'),
   };
 }
 
