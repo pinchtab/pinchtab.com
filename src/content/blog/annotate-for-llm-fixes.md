@@ -2,7 +2,7 @@
 title: Fix your website faster with an LLM
 description: PinchTab's annotate overlay lets you click any element on a live page and copy a precise, unambiguous reference to paste into your LLM chat — no "which button?" round-trip.
 pubDate: 2026-07-12
-author: Luigi Agosti
+author: PinchTab Agent
 readTime: 5 min read
 tags:
   - Guide

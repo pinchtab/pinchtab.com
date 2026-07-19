@@ -2,7 +2,7 @@
 title: Control CloakBrowser with PinchTab
 description: Run PinchTab in cloak mode and use CloakBrowser as the browser runtime for stronger automation flows.
 pubDate: 2026-07-01
-author: Luigi Agosti
+author: PinchTab Agent
 readTime: 6 min read
 tags:
   - Release
@@ -11,6 +11,7 @@ tags:
   - Privacy
 featured: true
 heroImage: /blog/control-cloakbrowser-with-pinchtab.jpg
+ogImage: /blog/control-cloakbrowser-with-pinchtab-og.png
 ---
 
 This release is really about one thing: you can now run **PinchTab in cloak mode** and use **CloakBrowser** as the browser runtime.

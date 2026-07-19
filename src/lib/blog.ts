@@ -16,6 +16,7 @@ export interface BlogPostSummary {
   featured: boolean;
   draft: boolean;
   heroImage: string;
+  ogImage: string;
 }
 
 export interface BlogPost extends BlogPostSummary {
@@ -51,12 +52,13 @@ function normalizePost(slug: string, data: Record<string, unknown>): BlogPostSum
     description: String(data.description),
     pubDate,
     updatedDate: updatedDate && !Number.isNaN(updatedDate.getTime()) ? updatedDate : undefined,
-    author: String(data.author ?? 'Luigi Agosti'),
+    author: String(data.author ?? 'PinchTab Agent'),
     readTime: String(data.readTime),
     tags: Array.isArray(data.tags) ? data.tags.map((tag) => String(tag)) : [],
     featured: Boolean(data.featured),
     draft: Boolean(data.draft),
     heroImage: String(data.heroImage ?? '/og-image.png'),
+    ogImage: String(data.ogImage ?? data.heroImage ?? '/og-image.png'),
   };
 }
 
